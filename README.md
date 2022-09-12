@@ -7,7 +7,9 @@ The basic workflow of MuXTalk is as follows:
 - **between/shortest_paths_multilink_counts_discovery(...):** Count multilinks for the actual layers.
 - **between/shortest_paths_multilink_counts_rand_discovery(...):** Count multilinks for the randomized layers.
 - **between/shortest_paths_multilink_zscores_pvals_discovery(...):** Calculate multilink statistics.
-- **get_ranked_pathway_pairs_discovery(...):** Calculate MuXTalk scores to assess crosstalk between all pairs of KEGG pathways in the discovery dataset.
+- **get_ranked_pathway_pairs_discovery(...):** Calculate MuXTalk scores to prioritize pathway pairs by their propensity to crosstalk with each other based on the multilink statistics.
+
+
 
 ## Running MuXTalk locally (recommended for custom GRNs)
 
