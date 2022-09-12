@@ -18,7 +18,7 @@ There are two options to run MuXTalk end-to-end.
 
 While the ensemble of randomized network layers can be generated locally
 
-Download the ensembles of randomized networks from 
+Download the ensembles of randomized networks (N=500) using the below links:
 https://www.dropbox.com/s/rbwi4qo2rsx2tqg/A_KEGG_e_sparr_rand_dict_500runs.pickle?dl=0 [KEGG_e -- interaction-specific KEGG]
 https://www.dropbox.com/s/pknam5ok2rhccre/A_KEGGPPI_sparr_rand_dict_500runs.pickle?dl=0 [KEGG + PPI combined]
 https://www.dropbox.com/s/p1xq59s44rgzxof/HumanGRN10e4_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-4]
