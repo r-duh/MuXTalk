@@ -7,7 +7,7 @@ The basic workflow of MuXTalk consists of the following functions:
 - **between/shortest_paths_multilink_counts_discovery(...):** Count multilinks for the actual layers.
 - **between/shortest_paths_multilink_counts_rand_discovery(...):** Count multilinks for the randomized layers.
 - **between/shortest_paths_multilink_zscores_pvals_discovery(...):** Calculate multilink statistics.
-- **get_ranked_pathway_pairs_discovery(...):** Calculate MuXTalk scores to prioritize pathway pairs by their propensity to crosstalk with each other based on the multilink statistics.
+- **get_ranked_pathway_pairs_discovery(...):** Calculate MuXTalk scores to prioritize pathway pairs by their propensity to crosstalk with each other based on the multilink statistics. The resulting file is a ranked list of all pathway pairs in .csv (default) or .parquet format.
 
 
 
