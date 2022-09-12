@@ -1,6 +1,17 @@
 # MuXTalk
 
+The basic workflow of MuXTalk is as follows:
+- Prepare the KEGG signaling pathway, protein-protein interaction (PPI) and gene regulatory network (GRN) data to build the signaling-regulatory multilayer network.  function: process_data()
+- Generate sparse adjacency matrices for the signaling and regulatory layer. function: sparse_layers()
+- Create ensembles of randomized versions of the sparse adjacency matrices. function: 
+- Count multilinks and calculate multilink statistics.
+
 ## Running MuXTalk locally (recommended for custom GRNs)
+
+The user has two options to run MuXTalk end-to-end. 
+
+
+While the ensemble of randomized network layers can be generated locally
 
 
 
