@@ -2943,8 +2943,6 @@ def run_MuXTalk(proj_path, input_filenames_dict, input_GRN, MuXTalk_method='MuXT
                                                                                      PPI_all_edges_entrez, 
                                                                                      KEGG_all_edges_entrez, KEGG_PPI_all_edges_entrez, 
                                                                                      KEGG_interaction_types_dict)
-
-    (KEGG_allnodes_entrez_df, A_KEGG_sparr) = process_KEGG(KEGG_all_edges_entrez, proj_path, input_filenames_dict)
     
     (common_crosstalk_paths, XTalk_DB_positives_common, XTalk_DB_positives_common_str) = XTalk_DB(KEGG_all_paths, proj_path, input_filenames_dict)
     
