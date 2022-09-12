@@ -26,4 +26,6 @@ https://www.dropbox.com/s/hd49mgdle9uhc33/HumanGRN10e5_A_GRN_sparr_rand_dict_500
 https://www.dropbox.com/s/z14qywvqsa3mkqw/HumanGRN10e6_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-6]
 
 
-## Running the MuXTalk Streamit app (recommended to visually explore the default GRNs)
+## Running the MuXTalk Streamit app (recommended to visually explore both the default GRNs and custom GRNs)
+
+.parquet files that are output by the MuXTalk script can be used as input to the Streamlit app. 
