@@ -25,6 +25,9 @@ https://www.dropbox.com/s/p1xq59s44rgzxof/HumanGRN10e4_A_GRN_sparr_rand_dict_500
 https://www.dropbox.com/s/hd49mgdle9uhc33/HumanGRN10e5_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-5]
 https://www.dropbox.com/s/z14qywvqsa3mkqw/HumanGRN10e6_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-6]
 
+## Running MuXTalk as a Docker container
+
+
 ## Running MuXTalk with custom GRNs
 - Make GRN edgelist file with the name "input_GRN_edges.csv" where input_GRN is the name of the custom GRN, e.g. "HumanGRN10e6". No column names.
 
