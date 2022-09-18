@@ -25,7 +25,20 @@ https://www.dropbox.com/s/p1xq59s44rgzxof/HumanGRN10e4_A_GRN_sparr_rand_dict_500
 https://www.dropbox.com/s/hd49mgdle9uhc33/HumanGRN10e5_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-5]
 https://www.dropbox.com/s/z14qywvqsa3mkqw/HumanGRN10e6_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-6]
 
-## Running MuXTalk as a Docker container
+## Running MuXTalk as a Docker container (Requires >10GB of RAM)
+
+We recommending using Docker as the most user-friendly option of running MuXTalk. 
+
+To run MuXTalk as a Docker container, Docker must be installed. Please see https://docs.docker.com/get-docker/ for installation instructions. Once Docker is installed, the MuXTalk image can either be pulled from Docker Hub or run locally using the .tar file.
+
+Next, follow the below steps to run the MuXTalk container in Docker:
+Download the file (...) to be used as a mounted volume.
+Then simply type in the below command in the terminal:
+docker run -it --memory 12g --memory-swap -1 -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm muxtalk-docker-app-slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
+
+For user-defined GRNs, use input_GRN=customGRN.
+
+
 
 
 ## Running MuXTalk with custom GRNs
