@@ -36,7 +36,7 @@ Next, follow the below steps to run the MuXTalk container in Docker:
 - Then simply type in the below command in the terminal:
 docker run -it --memory 12g --memory-swap -1 -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm muxtalk-docker-app-slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
 
-For user-defined GRNs, use input_GRN=customGRN.
+For user-defined GRNs, use "customGRN" as the input GRN name, i.e. --input_GRN=customGRN.
 
 
 
