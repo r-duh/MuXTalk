@@ -32,8 +32,8 @@ We recommending using Docker as the most user-friendly option of running MuXTalk
 To run MuXTalk as a Docker container, Docker must be installed. Please see https://docs.docker.com/get-docker/ for installation instructions. Once Docker is installed, the MuXTalk image can either be pulled from Docker Hub or run locally using the .tar file.
 
 Next, follow the below steps to run the MuXTalk container in Docker:
-Download the file (...) to be used as a mounted volume.
-Then simply type in the below command in the terminal:
+- Download the file (...) to be used as a mounted volume.
+- Then simply type in the below command in the terminal:
 docker run -it --memory 12g --memory-swap -1 -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm muxtalk-docker-app-slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
 
 For user-defined GRNs, use input_GRN=customGRN.
