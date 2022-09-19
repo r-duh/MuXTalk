@@ -73,7 +73,7 @@ optional arguments:
                         file. False (default) outputs .csv files.
 ```
 
-The only required argument is --proj_path, which should be set to /path/to/MuXTalk_Docker_mount/.
+The only required argument is --proj_path, which should be set to /path/to/MuXTalk_Docker_mount/. Set --parquet=True to generate .parquet files to be used with the Streamlit visualization (detailed below).
 
 
 For example, if we wanted to run MuXTalk_shortest on "HumanGRN106" as the input gene regulatory network (GRN) with a shortest path threshold of 1, we would run MuXTalk using
@@ -83,14 +83,14 @@ python3 run_MuXTalk.py --proj_path=/path/to/MuXTalk_Docker_mount/ --input_GRN=Hu
 
 ## Running MuXTalk with custom GRNs
 - Once MuXTalk is set up, we can also run it with user-defined GRNs. For this, we need to first add into our local MuXTalk folder (/path/to/MuXTalk_Docker_mount/) an edgelist file for the custom GRN named "customGRN_edges.csv". This file must have two columns, without headers, the first one for the source gene (or transcription factor) and the second one for the target gene. "custom_GRN" will also be the name of the input_GRN variable. Genes must have Gene Symbols as identifiers; MuXTalk will take care of all the ID conversions.
-- When we run MuXTalk with --input_GRN=custom_GRN with customGRN_edges.csv in /path/to/MuXTalk_Docker_mount/, MuXTalk will create the randomized versions of the GRN and store them in the /customGRN_A_GRN_sparr_rand_npz_files/ folder. This folder is initially empty and is populated as MuXTalk runs. This step will have to be only done once per each new GRN.
+- When we run MuXTalk with --input_GRN=custom_GRN with customGRN_edges.csv in /path/to/MuXTalk_Docker_mount/, MuXTalk will create the randomized versions of the custom GRN and store them in the /customGRN_A_GRN_sparr_rand_npz_files/ folder. This folder is initially empty and is populated as MuXTalk runs. This step will have to be only done once per each new GRN.
 
 
 ## What MuXTalk does, in a nutshell:
 The basic workflow of MuXTalk consists of the following functions:
 - **process_data(...):** Prepare the KEGG signaling pathway, protein-protein interaction (PPI) and gene regulatory network (GRN) data to build the signaling-regulatory multilayer network. This step involves parsing data, matching identifiers, reindexing, creating edge and node dictionaries, and so on, to be suitable for representation as a multilayer network.
 - **sparse_layers(...):** Generate sparse adjacency matrices for the signaling and regulatory layer.
-- **randomize_\*(...) or randomize_\*\_npz(...):** Create (or read from file) ensembles of randomized versions of the sparse adjacency matrices. Please note that the first version of the randomize function saves the entire ensemble in a .pickle file as a single dictionary for fast access and, therefore, the interaction-specific sparse matrices KEGG_e in particular is a large file (28GB). In contrast, the \_npz version saves each randomized sparse adjacency matrix as an individual .npz (a compressed NumPy array format) file. The overall size of .npz files is much smaller compared to .pickle (e.g., ~5GB for KEGG_e), however, reading .npz files in real-time takes much longer than accessing the elements of the dictionary. This is why we use the npz version in the Docker image (detailed below). In either case, the user may choose to download the network ensembles directly using the links below or create them from scratch locally. The latter option takes ~10hrs on a typical laptop. If the randomized networks are available in the **proj_path** directory, the randomize function will skip to just reading them.
+- **randomize_\*(...) or randomize_\*\_npz(...):** Create (or read from file) ensembles of randomized versions of the sparse adjacency matrices. Please note that the first version of the randomize function saves the entire ensemble in a .pickle file as a single dictionary for fast access and, therefore, the interaction-specific sparse matrices KEGG_e in particular is a large file (~30GB). In contrast, the \_npz version saves each randomized sparse adjacency matrix as an individual .npz (a compressed NumPy array format) file. The overall size of .npz files is much smaller compared to .pickle (e.g., ~5GB for KEGG_e), however, reading .npz files in real-time takes much longer than accessing the elements of the dictionary. This is why we use the npz version in the Docker image (detailed below). In either case, the user may choose to download the network ensembles directly using the links below or create them from scratch locally. The latter option takes ~10hrs on a typical laptop. If the randomized networks are available in the **proj_path** directory, the randomize function will skip to just reading them.
 - **between/shortest_paths_multilink_counts_discovery(...):** Count multilinks for the actual layers.
 - **between/shortest_paths_multilink_counts_rand_discovery(...):** Count multilinks for the randomized layers.
 - **between/shortest_paths_multilink_zscores_pvals_discovery(...):** Calculate multilink statistics.
