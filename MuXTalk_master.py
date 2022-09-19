@@ -3114,7 +3114,20 @@ def randomize_GRN_npz(A_GRN_sparr, proj_path, input_GRN, npz_folder_name, N_runs
         
         if return_output==True:        
             return A_GRN_sparr_rand_dict
+            
+    elif len(os.listdir(proj_path + input_GRN + '_' + npz_folder_name)) == 0:
         
+        print('Computing ensemble of randomized GRN sparse  matrices...')
+        A_GRN_sparr_rand_dict = {}
+        for nrand in tqdm(np.arange(N_runs), position=0, leave=True):
+            A_GRN_arr_rand, A_GRN_nrew_rand = edge_swap_undir_sign(A_GRN_sparr.toarray(), N_swap)
+            A_GRN_sparr_rand_dict[nrand] = sparse.csr_matrix(A_GRN_arr_rand)
+            sparse.save_npz(proj_path + input_GRN + '_' + npz_folder_name + '%s_A_GRN_sparr_rand_%s.npz' % (input_GRN, nrand), 
+                            A_GRN_sparr_rand_dict[nrand])          
+        
+        if return_output==True:        
+            return A_GRN_sparr_rand_dict    
+            
     else:
         
         A_GRN_sparr_rand_dict = read_A_GRN_sparr_rand_from_npz(proj_path, input_GRN, npz_folder_name, get_n=get_n, get_randomly=get_randomly)
