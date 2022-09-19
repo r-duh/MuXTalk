@@ -1,5 +1,8 @@
 # MuXTalk
 
+A network-based statistical framework to explore crosstalk between signaling pathways.
+
+**Preprint URL:*** 
 
 
 ## Running MuXTalk locally (recommended for user-defined GRNs)
