@@ -24,14 +24,27 @@ This is perhaps the most straightforward choice for the general user and only re
 
 - [Download](https://www.dropbox.com/sh/ztlc8spxyvu5cgn/AABVSaaTLQQUrs3_SwLo-B8ca?dl=0) the MuXTalk folders to be mounted as a volume to the Docker container. This local folder (i.e., located in the user's machine) will act as the main folder in which the MuXTalk container will read and write files.
 
-- Simply type in the below command in the terminal to run the MuXTalk image as a container:
+- Simply type in the below command in the terminal to run the MuXTalk image as a container. /path/to/MuXTalk_Docker_mount/ is where the folder you downloaded is located in your computer.
 ```
 docker run -it --memory 12g --memory-swap -1 -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm muxtalk-docker-app-slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
 ```
 
-2) Run the MuXTalk script directly (requires familiarity with Python environments)
-- Create a new environment for MuXTalk using conda: 
-- conda create -n myenv python=3.9
+2) Run the MuXTalk script directly (requires conda to be installed )
+As the first step, install conda on oyur system (https://conda.io/projects/conda/en/latest/user-guide/install/index.html). Next, type the following commands in your command prompt, or terminal, in the following order to set up and run MuXTalk.
+- Create a new environment named "muxtalk" (or any name of your choosing) for MuXTalk using conda: 
+```
+conda create -n muxtalk python=3.8
+```
+- Activate the newly created Conda environment:
+```
+conda activate muxtalk
+```
+- Install the dependencies needed by MuXTalk using the requirements.txt file in /path/to/MuXTalk_Docker_mount/
+```
+conda install --file /path/to/MuXTalk_Docker_mount/requirements.txt
+```
+- You have now created a new conda environment and installed in it all the packages MuXTalk needs to run. The only remaining step is to run MuXTalk
+
 
 
 While the ensemble of randomized network layers can be generated locally
