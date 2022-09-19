@@ -5,7 +5,7 @@
 ## Running MuXTalk locally (recommended for user-defined GRNs)
 
 ### There are two options to run MuXTalk end-to-end: 
-1) Run MuXTalk as a Docker container (requires Docker installation)
+#### 1) Run MuXTalk as a Docker container (requires Docker installation)
 This is perhaps the most straightforward choice for the general user and only requires Docker to be installed. Please see https://docs.docker.com/get-docker/ for installation instructions. 
 
 - Once Docker is installed, the MuXTalk image "muxtalk-docker-app-slim" can either be pulled from Docker Hub or run locally using the .tar file in the link below:
@@ -19,7 +19,7 @@ This is perhaps the most straightforward choice for the general user and only re
 docker run -it -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm muxtalk-docker-app-slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
 ```
 
-2) Run the MuXTalk script directly (requires conda to be installed )
+#### 2) Run the MuXTalk script directly (requires conda to be installed )
 As the first step, install conda on oyur system (https://conda.io/projects/conda/en/latest/user-guide/install/index.html). Next, type the following commands in your command prompt, or terminal, in the following order to set up and run MuXTalk.
 - Create a new environment named "muxtalk" (or any name of your choosing) for MuXTalk using conda: 
 ```
@@ -83,7 +83,7 @@ python3 run_MuXTalk.py --proj_path=/path/to/MuXTalk_Docker_mount/ --input_GRN=Hu
 
 ## Running MuXTalk with custom GRNs
 - Once MuXTalk is set up, we can also run it with user-defined GRNs. For this, we need to first add into our local MuXTalk folder (/path/to/MuXTalk_Docker_mount/) an edgelist file for the custom GRN named "customGRN_edges.csv". This file must have two columns, without headers, the first one for the source gene (or transcription factor) and the second one for the target gene. "custom_GRN" will also be the name of the input_GRN variable. Genes must have Gene Symbols as identifiers; MuXTalk will take care of all the ID conversions.
-- When we run MuXTalk with --input_GRN=custom_GRN with customGRN_edges.csv in /path/to/MuXTalk_Docker_mount/, MuXTalk will create the randomized versions of the GRN and store them in the /customGRN_A_GRN_sparr_rand_npz_files/ folder. This step will have to be only done once per each new GRN.
+- When we run MuXTalk with --input_GRN=custom_GRN with customGRN_edges.csv in /path/to/MuXTalk_Docker_mount/, MuXTalk will create the randomized versions of the GRN and store them in the /customGRN_A_GRN_sparr_rand_npz_files/ folder. This folder is initially empty and is populated as MuXTalk runs. This step will have to be only done once per each new GRN.
 
 
 ## What MuXTalk does, in a nutshell:
