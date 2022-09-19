@@ -11,7 +11,7 @@ A network-based statistical framework to explore crosstalk between signaling pat
 #### 1) Run MuXTalk as a Docker container (requires Docker installation)
 This is perhaps the most straightforward choice for the general user and only requires Docker to be installed. Please see https://docs.docker.com/get-docker/ for installation instructions. 
 
-- Once Docker is installed, the MuXTalk image "muxtalk-docker-app-slim" can either be pulled from Docker Hub or run locally using the .tar file in the link below:
+- Once Docker is installed, the MuXTalk image "rduh/muxtalk:slim" can either be pulled from Docker Hub or run locally using the .tar file in the link below:
 ```
 docker pull rduh/muxtalk:slim
 ```
@@ -23,7 +23,7 @@ docker pull rduh/muxtalk:slim
 
 - As an example use case, type in the below command in the terminal to run the MuXTalk image as a container. /path/to/MuXTalk_Docker_mount/ is where the folder you downloaded is located in your computer. Details about the MuXTalk parameters can be found in the following sections.
 ```
-docker run -it -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm muxtalk-docker-app-slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
+docker run -it -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm rduh/muxtalk:slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
 ```
 
 #### 2) Run the MuXTalk script directly (requires conda to be installed )
@@ -115,7 +115,7 @@ In the event that the Docker container quits with or without errors, the followi
 - Use the --memory and --memory-swap flags to increase the memory and swap partition allocated to the container
 -   e.g. - Then simply type in the below command in the terminal: 
 ```
-docker run -it --memory 12g --memory-swap -1 -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm muxtalk-docker-app-slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
+docker run -it --memory 12g --memory-swap -1 -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm rduh/muxtalk:slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
 ```
 
 
