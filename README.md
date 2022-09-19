@@ -1,20 +1,10 @@
 # MuXTalk
 
-## What MuXTalk does, in a nutshell:
-The basic workflow of MuXTalk consists of the following functions:
-- **process_data(...):** Prepare the KEGG signaling pathway, protein-protein interaction (PPI) and gene regulatory network (GRN) data to build the signaling-regulatory multilayer network. This step involves parsing data, matching identifiers, reindexing, creating edge and node dictionaries, and so on, to be suitable for representation as a multilayer network.
-- **sparse_layers(...):** Generate sparse adjacency matrices for the signaling and regulatory layer.
-- **randomize_\*(...) or randomize_\*\_npz(...):** Create (or read from file) ensembles of randomized versions of the sparse adjacency matrices. Please note that the first version of the randomize function saves the entire ensemble in a .pickle file as a single dictionary for fast access and, therefore, the interaction-specific sparse matrices KEGG_e in particular is a large file (28GB). In contrast, the \_npz version saves each randomized sparse adjacency matrix as an individual .npz (a compressed NumPy array format) file. The overall size of .npz files is much smaller compared to .pickle (e.g., ~5GB for KEGG_e), however, reading .npz files in real-time takes much longer than accessing the elements of the dictionary. This is why we use the npz version in the Docker image (detailed below). In either case, the user may choose to download the network ensembles directly using the links below or create them from scratch locally. The latter option takes ~10hrs on a typical laptop. If the randomized networks are available in the **proj_path** directory, the randomize function will skip to just reading them.
-- **between/shortest_paths_multilink_counts_discovery(...):** Count multilinks for the actual layers.
-- **between/shortest_paths_multilink_counts_rand_discovery(...):** Count multilinks for the randomized layers.
-- **between/shortest_paths_multilink_zscores_pvals_discovery(...):** Calculate multilink statistics.
-- **get_ranked_pathway_pairs_discovery(...):** Calculate MuXTalk scores to prioritize pathway pairs by their propensity to crosstalk with each other based on multilink statistics. The resulting file is a ranked list of all pathway pairs in .csv (default) or .parquet (used for the Streamlit app) format.
-
 
 
 ## Running MuXTalk locally (recommended for user-defined GRNs)
 
-There are two options to run MuXTalk end-to-end: 
+### There are two options to run MuXTalk end-to-end: 
 1) Run MuXTalk as a Docker container (requires Docker installation)
 This is perhaps the most straightforward choice for the general user and only requires Docker to be installed. Please see https://docs.docker.com/get-docker/ for installation instructions. 
 
@@ -96,6 +86,38 @@ python3 run_MuXTalk.py --proj_path=/path/to/MuXTalk_Docker_mount/ --input_GRN=Hu
 - When we run MuXTalk with --input_GRN=custom_GRN with customGRN_edges.csv in /path/to/MuXTalk_Docker_mount/, MuXTalk will create the randomized versions of the GRN and store them in the /customGRN_A_GRN_sparr_rand_npz_files/ folder. This step will have to be only done once per each new GRN.
 
 
+## What MuXTalk does, in a nutshell:
+The basic workflow of MuXTalk consists of the following functions:
+- **process_data(...):** Prepare the KEGG signaling pathway, protein-protein interaction (PPI) and gene regulatory network (GRN) data to build the signaling-regulatory multilayer network. This step involves parsing data, matching identifiers, reindexing, creating edge and node dictionaries, and so on, to be suitable for representation as a multilayer network.
+- **sparse_layers(...):** Generate sparse adjacency matrices for the signaling and regulatory layer.
+- **randomize_\*(...) or randomize_\*\_npz(...):** Create (or read from file) ensembles of randomized versions of the sparse adjacency matrices. Please note that the first version of the randomize function saves the entire ensemble in a .pickle file as a single dictionary for fast access and, therefore, the interaction-specific sparse matrices KEGG_e in particular is a large file (28GB). In contrast, the \_npz version saves each randomized sparse adjacency matrix as an individual .npz (a compressed NumPy array format) file. The overall size of .npz files is much smaller compared to .pickle (e.g., ~5GB for KEGG_e), however, reading .npz files in real-time takes much longer than accessing the elements of the dictionary. This is why we use the npz version in the Docker image (detailed below). In either case, the user may choose to download the network ensembles directly using the links below or create them from scratch locally. The latter option takes ~10hrs on a typical laptop. If the randomized networks are available in the **proj_path** directory, the randomize function will skip to just reading them.
+- **between/shortest_paths_multilink_counts_discovery(...):** Count multilinks for the actual layers.
+- **between/shortest_paths_multilink_counts_rand_discovery(...):** Count multilinks for the randomized layers.
+- **between/shortest_paths_multilink_zscores_pvals_discovery(...):** Calculate multilink statistics.
+- **get_ranked_pathway_pairs_discovery(...):** Calculate MuXTalk scores to prioritize pathway pairs by their propensity to crosstalk with each other based on multilink statistics. The resulting file is a ranked list of all pathway pairs in .csv (default) or .parquet (used for the Streamlit app) format.
+
+
+## Running the MuXTalk Streamit app (recommended to visually explore both the default GRNs and custom GRNs)
+
+.parquet files that are output by the MuXTalk script can be used as input to the Streamlit app. 
+
+
+## Troubleshooting
+
+In the event that the Docker container quits with or without errors, the following measures might help to mitigate the potentially memory-related issues.
+- Use the --memory and --memory-swap flags to increase the memory and swap partition allocated to the container
+-   e.g. - Then simply type in the below command in the terminal: 
+```
+docker run -it --memory 12g --memory-swap -1 -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm muxtalk-docker-app-slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
+```
+
+
+<br>
+<br>
+<br>
+<br>
+
+
 
 
 
@@ -111,7 +133,6 @@ https://www.dropbox.com/s/hd49mgdle9uhc33/HumanGRN10e5_A_GRN_sparr_rand_dict_500
 https://www.dropbox.com/s/z14qywvqsa3mkqw/HumanGRN10e6_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-6]
 
 
-For user-defined GRNs, use "customGRN" as the input GRN name, i.e. --input_GRN=customGRN.
 
 
 
@@ -122,17 +143,8 @@ For user-defined GRNs, use "customGRN" as the input GRN name, i.e. --input_GRN=c
 
 
 
-## Running the MuXTalk Streamit app (recommended to visually explore both the default GRNs and custom GRNs)
-
-.parquet files that are output by the MuXTalk script can be used as input to the Streamlit app. 
 
 
 
-## Troubleshooting
 
-In the event that the Docker container quits with or without errors, the following to mitigate the potentially memory-related issues.
-- Use the --memory and --memory-swap flags to increase the memory and swap partition allocated to the container
--   e.g. - Then simply type in the below command in the terminal: 
-```
-docker run -it --memory 12g --memory-swap -1 -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm muxtalk-docker-app-slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
-```
+
