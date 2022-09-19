@@ -26,7 +26,7 @@ This is perhaps the most straightforward choice for the general user and only re
 
 - Simply type in the below command in the terminal to run the MuXTalk image as a container. /path/to/MuXTalk_Docker_mount/ is where the folder you downloaded is located in your computer.
 ```
-docker run -it --memory 12g --memory-swap -1 -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm muxtalk-docker-app-slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
+docker run -it -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm muxtalk-docker-app-slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
 ```
 
 2) Run the MuXTalk script directly (requires conda to be installed )
@@ -43,25 +43,11 @@ conda activate muxtalk
 ```
 conda install --file /path/to/MuXTalk_Docker_mount/requirements.txt
 ```
-- You have now created a new conda environment and installed in it all the packages MuXTalk needs to run. The only remaining step is to run MuXTalk
-
-
-
-While the ensemble of randomized network layers can be generated locally
-
-Download the ensembles of randomized networks (N=500) using the below links:
-https://www.dropbox.com/s/rbwi4qo2rsx2tqg/A_KEGG_e_sparr_rand_dict_500runs.pickle?dl=0 [KEGG_e -- interaction-specific KEGG]
-https://www.dropbox.com/s/pknam5ok2rhccre/A_KEGGPPI_sparr_rand_dict_500runs.pickle?dl=0 [KEGG + PPI combined]
-https://www.dropbox.com/s/p1xq59s44rgzxof/HumanGRN10e4_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-4]
-https://www.dropbox.com/s/hd49mgdle9uhc33/HumanGRN10e5_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-5]
-https://www.dropbox.com/s/z14qywvqsa3mkqw/HumanGRN10e6_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-6]
-
-
-For user-defined GRNs, use "customGRN" as the input GRN name, i.e. --input_GRN=customGRN.
-
-
-
-The options for the MuXTalk script can be accessed by 
+- You have now created a new conda environment and installed in it all the packages MuXTalk needs to run. The only remaining step is to run MuXTalk. First, navigate to /path/to/MuXTalk_Docker_mount/
+```
+cd /path/to/MuXTalk_Docker_mount/
+ ```
+You can then inspect the options for the MuXTalk script by 
 ```
 python3 run_MuXTalk.py --help
 ```
@@ -96,6 +82,35 @@ optional arguments:
   --parquet PARQUET     Option to output the MuXTalk results as a .parquet
                         file. False (default) outputs .csv files.
 ```
+
+The only required argument is --proj_path, which should be set to /path/to/MuXTalk_Docker_mount/.
+
+
+and then, run the MuXTalk script
+```
+python3 run_MuXTalk.py 
+```
+python3 run_MuXTalk.py.
+
+
+
+
+
+
+While the ensemble of randomized network layers can be generated locally
+
+Download the ensembles of randomized networks (N=500) using the below links:
+https://www.dropbox.com/s/rbwi4qo2rsx2tqg/A_KEGG_e_sparr_rand_dict_500runs.pickle?dl=0 [KEGG_e -- interaction-specific KEGG]
+https://www.dropbox.com/s/pknam5ok2rhccre/A_KEGGPPI_sparr_rand_dict_500runs.pickle?dl=0 [KEGG + PPI combined]
+https://www.dropbox.com/s/p1xq59s44rgzxof/HumanGRN10e4_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-4]
+https://www.dropbox.com/s/hd49mgdle9uhc33/HumanGRN10e5_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-5]
+https://www.dropbox.com/s/z14qywvqsa3mkqw/HumanGRN10e6_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-6]
+
+
+For user-defined GRNs, use "customGRN" as the input GRN name, i.e. --input_GRN=customGRN.
+
+
+
 
 
 ## Running MuXTalk with custom GRNs
