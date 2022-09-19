@@ -9,6 +9,10 @@
 This is perhaps the most straightforward choice for the general user and only requires Docker to be installed. Please see https://docs.docker.com/get-docker/ for installation instructions. 
 
 - Once Docker is installed, the MuXTalk image "muxtalk-docker-app-slim" can either be pulled from Docker Hub or run locally using the .tar file in the link below:
+```
+docker pull rduh/muxtalk:slim
+```
+
 [docker pull -----]
 [docker load -----]
 
