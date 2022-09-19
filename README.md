@@ -2,7 +2,7 @@
 
 A network-based statistical framework to explore crosstalk between signaling pathways.
 
-**Preprint URL:*** 
+**Preprint URL:** 
 
 
 ## Running MuXTalk locally (recommended for user-defined GRNs)
@@ -16,7 +16,6 @@ This is perhaps the most straightforward choice for the general user and only re
 docker pull rduh/muxtalk:slim
 ```
 
-[docker pull -----]
 [docker load -----]
 
 - [Download](https://www.dropbox.com/sh/ztlc8spxyvu5cgn/AABVSaaTLQQUrs3_SwLo-B8ca?dl=0) the MuXTalk folder to be mounted as a volume to the Docker container. This local folder (i.e., located in the user's machine), named /MuXTalk_Docker_mount/, will act as the main folder in which the MuXTalk container will read and write files.
@@ -128,7 +127,7 @@ docker run -it --memory 12g --memory-swap -1 -v /path/to/MuXTalk_Docker_mount/:/
 
 
 
-Additional considerations:
+<!-- Additional considerations:
 
 While the ensemble of randomized network layers can be generated locally
 
@@ -137,7 +136,7 @@ https://www.dropbox.com/s/rbwi4qo2rsx2tqg/A_KEGG_e_sparr_rand_dict_500runs.pickl
 https://www.dropbox.com/s/pknam5ok2rhccre/A_KEGGPPI_sparr_rand_dict_500runs.pickle?dl=0 [KEGG + PPI combined]
 https://www.dropbox.com/s/p1xq59s44rgzxof/HumanGRN10e4_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-4]
 https://www.dropbox.com/s/hd49mgdle9uhc33/HumanGRN10e5_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-5]
-https://www.dropbox.com/s/z14qywvqsa3mkqw/HumanGRN10e6_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-6]
+https://www.dropbox.com/s/z14qywvqsa3mkqw/HumanGRN10e6_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-6] -->
 
 
 # Contact:
