@@ -15,8 +15,10 @@ This is perhaps the most straightforward choice for the general user and only re
 ```
 docker pull rduh/muxtalk:slim
 ```
-or run locally using the [.tar file.](https://www.dropbox.com/s/dz8m1ydavx175u6/muxtalk_slim.tar?dl=0)
-
+or loaded from the [.tar file](https://www.dropbox.com/s/dz8m1ydavx175u6/muxtalk_slim.tar?dl=0) using
+```
+docker load --input muxtalk_slim.tar
+```
 
 - [Download](https://www.dropbox.com/sh/ztlc8spxyvu5cgn/AABVSaaTLQQUrs3_SwLo-B8ca?dl=0) the MuXTalk folder to be mounted as a volume to the Docker container. This local folder (i.e., located in the user's machine), named /MuXTalk_Docker_mount/, will act as the main folder in which the MuXTalk container will read and write files.
 
