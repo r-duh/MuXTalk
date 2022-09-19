@@ -11,12 +11,12 @@ A network-based statistical framework to explore crosstalk between signaling pat
 #### 1) Run MuXTalk as a Docker container (requires Docker installation)
 This is perhaps the most straightforward choice for the general user and only requires Docker to be installed. Please see https://docs.docker.com/get-docker/ for installation instructions. 
 
-- Once Docker is installed, the MuXTalk image "rduh/muxtalk:slim" can either be pulled from Docker Hub or run locally using the .tar file in the link below:
+- Once Docker is installed, the MuXTalk image "rduh/muxtalk:slim" can either be pulled from Docker Hub
 ```
 docker pull rduh/muxtalk:slim
 ```
+or run locally using the [.tar file.](https://www.dropbox.com/s/dz8m1ydavx175u6/muxtalk_slim.tar?dl=0)
 
-[docker load -----]
 
 - [Download](https://www.dropbox.com/sh/ztlc8spxyvu5cgn/AABVSaaTLQQUrs3_SwLo-B8ca?dl=0) the MuXTalk folder to be mounted as a volume to the Docker container. This local folder (i.e., located in the user's machine), named /MuXTalk_Docker_mount/, will act as the main folder in which the MuXTalk container will read and write files.
 
