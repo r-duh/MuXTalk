@@ -300,3 +300,132 @@ def return_shortest_multilink_edges_forStreamlit(proj_path, sp_threshold, p1, p2
     return shortest_multilink_edges_df         
         
 
+# preprocess the KEGG, PPI and GRN data
+@st.cache(show_spinner=False, allow_output_mutation=True)
+def process_data_forStreamlit_customGRN(proj_path, custom_GRN_edges, input_filenames_dict):
+    
+    ### import the most recent conversions from HUGO (more reliable than my gene-info-stripped since it's automatically updated)
+    print('Loading Gene Symbol-Entrez ID-Uniprot ID mappings...')
+    HUGO_symb_entrez_uniprot = pd.read_csv(proj_path + input_filenames_dict['HUGO_symb_entrez_uniprot'], sep='\t')
+    # here we take Entrez IDs as the basis and only the part for which Entrez IDs are known (the NaN rows are usually the "withdrawn" entries)
+    HUGO_symb_entrez_uniprot = HUGO_symb_entrez_uniprot[~pd.isnull(HUGO_symb_entrez_uniprot['NCBI Gene ID(supplied by NCBI)'])]
+    HUGO_symb_entrez_uniprot = HUGO_symb_entrez_uniprot.astype({'NCBI Gene ID(supplied by NCBI)': int}) 
+    
+    ### import the protein-protein interaction network from: Cheng, Feixiong, István A. Kovács, and Albert-László Barabási. 
+    # "Network-based prediction of drug combinations." Nature communications 10.1 (2019): 1-11.
+    print('Loading the PPI edges from Cheng et al. Nature communications 10.1 (2019): 1-11...')
+    PPI_Cheng_2019_data = pd.read_csv(proj_path + input_filenames_dict['PPI_Cheng_2019_data'])
+
+    PPI_Cheng_2019_data_symb = pd.merge(pd.merge(PPI_Cheng_2019_data, HUGO_symb_entrez_uniprot, 
+                                                 left_on='Protein_A_Entrez_ID', 
+                                                 right_on='NCBI Gene ID(supplied by NCBI)'), 
+                                        HUGO_symb_entrez_uniprot, 
+                                        left_on='Protein_B_Entrez_ID', 
+                                        right_on='NCBI Gene ID(supplied by NCBI)')[['Approved symbol_x', 'Approved symbol_y', 'data_source(s)']]
+    PPI_Cheng_2019_data_symb.columns = ['Protein_A_Gene_Symbol', 'Protein_B_Gene_Symbol', 'data_source(s)']
+  
+    ### import the GRN
+    print('Loading GRN edges...')
+    GRN_edges_df = pd.read_csv(custom_GRN_edges, sep='\t', header=None)
+    GRN_edges_df = GRN_edges_df.rename(columns={0: 'Source', 1: 'Target'})
+
+    ### import the KEGG signaling network, remove the GErel (gene regulatory) type
+    print('Loading KEGG signaling network edges...')
+    KEGG_all_nodes_df = pd.read_csv(proj_path + input_filenames_dict['KEGG_all_nodes_df'])
+    KEGG_all_edges_df = pd.read_csv(proj_path + input_filenames_dict['KEGG_all_edges_df'])
+    # Remove regulatory interactions
+    KEGG_all_edges_df = KEGG_all_edges_df[KEGG_all_edges_df['Edge_type']!='GErel']
+    
+
+    
+    ### make a master conversion file by taking the union of all three layers in terms of Entrez IDs
+    print('Cross-mapping Gene Symbols, Entrez IDs and Uniprot IDs...')
+    PPI_Cheng_2019_allnodes_entrez = set(PPI_Cheng_2019_data['Protein_A_Entrez_ID']) | set(PPI_Cheng_2019_data['Protein_B_Entrez_ID'])
+
+    GRN_allnodes_symb = set(GRN_edges_df['Source']) | set(GRN_edges_df['Target'])
+    GRN_allnodes_symb_df = pd.DataFrame(sorted(list(GRN_allnodes_symb)))
+    GRN_allnodes_entrez = set(pd.merge(GRN_allnodes_symb_df, HUGO_symb_entrez_uniprot, 
+                                       left_on=0, right_on='Approved symbol')['NCBI Gene ID(supplied by NCBI)'])
+
+    KEGG_allnodes_entrez = set([int(x.split('hsa:')[1]) for x in 
+                                list(KEGG_all_nodes_df[KEGG_all_nodes_df['Node_type']=='gene']['KEGG_name(s)_expanded'].values)])
+
+    all_layers_nodes_entrez = sorted(list(PPI_Cheng_2019_allnodes_entrez | GRN_allnodes_entrez | KEGG_allnodes_entrez))
+
+
+    entrez_conversion_df = pd.DataFrame()
+    entrez_conversion_df['Entrez ID'] = all_layers_nodes_entrez
+    entrez_conversion_df = pd.merge(entrez_conversion_df, HUGO_symb_entrez_uniprot, 
+                                    left_on='Entrez ID', right_on='NCBI Gene ID(supplied by NCBI)')[['Approved symbol', 
+                                                                                                     'NCBI Gene ID(supplied by NCBI)']]
+    entrez_conversion_df['KEGG_ID'] = 'hsa:' + entrez_conversion_df['NCBI Gene ID(supplied by NCBI)'].astype(str)
+    
+    ### Convert all edges to Entrez ID and build multilayer (PPI already in Entrez in "PPI_Cheng_2019_data")
+    KEGG_all_edges_entrez = pd.merge(pd.merge(KEGG_all_edges_df,  entrez_conversion_df, left_on='KEGG_name(s)_expanded_1', right_on='KEGG_ID'), 
+                                     entrez_conversion_df, left_on='KEGG_name(s)_expanded_2', right_on='KEGG_ID')
+    GRN_edges_entrez = pd.merge(pd.merge(GRN_edges_df, entrez_conversion_df, left_on='Source', right_on='Approved symbol'), 
+                                entrez_conversion_df, left_on='Target', right_on='Approved symbol')[['NCBI Gene ID(supplied by NCBI)_x', 
+                                                                                                    'NCBI Gene ID(supplied by NCBI)_y']]
+
+    ### Add PPI edges to the KEGG signaling layer
+    
+    print('Combining KEGG and PPI edges...')
+    # Designate it with the type "PPI". Add directed edges in both directions for all undirected edges.    
+    PPI_all_edges_entrez = pd.DataFrame(columns=KEGG_all_edges_entrez.columns)
+    PPI_all_edges_entrez['NCBI Gene ID(supplied by NCBI)_x'] = PPI_Cheng_2019_data['Protein_A_Entrez_ID']
+    PPI_all_edges_entrez['NCBI Gene ID(supplied by NCBI)_y'] = PPI_Cheng_2019_data['Protein_B_Entrez_ID']
+    PPI_all_edges_entrez['Path_label'] = 'ppi'
+    PPI_all_edges_entrez['Edge_type'] = 'ppi'
+    PPI_all_edges_entrez['Edge_subtype'] = 'ppi'
+
+    KEGG_PPI_all_edges_entrez = pd.concat([PPI_all_edges_entrez, KEGG_all_edges_entrez])
+    # remove the few edges with edge_subtype=NaN:
+    KEGG_PPI_all_edges_entrez = KEGG_PPI_all_edges_entrez[~pd.isnull(KEGG_PPI_all_edges_entrez['Edge_subtype'])]
+    KEGG_PPI_allnodes_entrez = (set(KEGG_PPI_all_edges_entrez['NCBI Gene ID(supplied by NCBI)_x']) |
+                            set(KEGG_PPI_all_edges_entrez['NCBI Gene ID(supplied by NCBI)_y']))
+
+    ### Get subgraph of GRN based on PPI+KEGG's nodes
+    GRN_KEGG_PPI_edges = GRN_edges_entrez[(GRN_edges_entrez['NCBI Gene ID(supplied by NCBI)_x'].isin(KEGG_PPI_allnodes_entrez)) & 
+                                                    (GRN_edges_entrez['NCBI Gene ID(supplied by NCBI)_y'].isin(KEGG_PPI_allnodes_entrez))]
+    
+    ### Dataframe of Entrez IDs and consecutive numbers to be used as indices in the adjacency matrices 
+    KEGG_PPI_allnodes_entrez_df = pd.DataFrame(sorted(list(KEGG_PPI_allnodes_entrez)))
+    KEGG_PPI_allnodes_entrez_df['ix'] = pd.DataFrame(sorted(list(KEGG_PPI_allnodes_entrez))).index
+    KEGG_PPI_allnodes_entrez_df = pd.merge(KEGG_PPI_allnodes_entrez_df, entrez_conversion_df, 
+                                           left_on=0, right_on='NCBI Gene ID(supplied by NCBI)', how='left')[[0, 'ix','Approved symbol']]
+    
+    ### Edge and node dictionaries of KEGG pathways
+    print('Generating edge and node dictionaries of KEGG pathways...')
+    # Get all pathway names with the exception of "ppi", which means those edges just belong to the PPI and not a specific signaling pathway.
+    KEGG_all_paths = sorted(list(set(sorted(KEGG_PPI_all_edges_entrez['Path_label'].unique())) - set(['ppi'])))
+
+    
+    print('Generating KEGG pathway-specific dataframes...')
+    KEGG_path_edges_df_dict = {}
+    KEGG_path_nodes_df_dict = {}
+    KEGG_path_nodes_dict = {}
+    KEGG_path_nodes_entrez_dict = {}
+
+    for p in KEGG_all_paths:
+        KEGG_path_edges_df_dict[p] = KEGG_PPI_all_edges_entrez[KEGG_PPI_all_edges_entrez['Path_label']==p]
+        # remove the few edges with edge_subtype=NaN:
+        KEGG_path_edges_df_dict[p] = KEGG_path_edges_df_dict[p][~pd.isnull(KEGG_path_edges_df_dict[p]['Edge_subtype'])]
+
+        KEGG_path_nodes_dict[p] = set(KEGG_path_edges_df_dict[p]['KEGG_name(s)_expanded_1']) | \
+                                                    set(KEGG_path_edges_df_dict[p]['KEGG_name(s)_expanded_2'])
+        KEGG_path_nodes_entrez_dict[p] = set(KEGG_path_edges_df_dict[p]['NCBI Gene ID(supplied by NCBI)_x']) | \
+                                                    set(KEGG_path_edges_df_dict[p]['NCBI Gene ID(supplied by NCBI)_y'])    
+        KEGG_path_nodes_df_dict[p] = KEGG_all_nodes_df[(KEGG_all_nodes_df['Path_label']==p) & 
+                                                       (KEGG_all_nodes_df['KEGG_name(s)_expanded'].isin(KEGG_path_nodes_dict[p]))]   
+        
+        
+    
+    KEGG_interaction_types_dict = {key: value for key, value in zip(KEGG_PPI_all_edges_entrez['Edge_subtype'].sort_values().unique()[1:],
+                                                                    np.arange(1, len(KEGG_PPI_all_edges_entrez['Edge_subtype'].value_counts())))}
+    all_motif_types = ['%s%s' %(i, j) for i, j in list(product(*[np.arange(len(KEGG_interaction_types_dict)+1), [-1, 0, 1]]))]
+    all_motif_types_list = np.array([(i, j) for i, j in list(product(*[np.arange(len(KEGG_interaction_types_dict)+1), [-1, 0, 1]]))])  
+    
+    
+    return (KEGG_PPI_allnodes_entrez, GRN_KEGG_PPI_edges, PPI_all_edges_entrez, KEGG_PPI_all_edges_entrez, KEGG_PPI_allnodes_entrez_df, 
+            KEGG_interaction_types_dict, KEGG_all_edges_entrez, KEGG_all_paths, KEGG_path_nodes_entrez_dict, 
+            all_motif_types, all_motif_types_list)

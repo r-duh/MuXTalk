@@ -17,7 +17,8 @@ st.sidebar.title(
 input_GRN = st.sidebar.selectbox('Select GRN', ['HumanGRN10e6', 'HumanGRN10e5', 'HumanGRN10e4'])	
 MuXTalk_method = st.sidebar.selectbox('Select MuXTalk type', ['MuXTalk_shortest', 'MuXTalk_between'])
 sp_threshold = st.sidebar.selectbox('Select shortest path threshold (MuXTalk_shortest only)', [2, 1, 'None'])
-custom_GRN = st.sidebar.file_uploader('Custom GRN')
+custom_GRN_edges = st.sidebar.file_uploader('Custom GRN edges')
+custom_GRN_parquet = st.sidebar.file_uploader('Custom GRN parquet file')
 
 with st.container():
 	'''
@@ -38,47 +39,89 @@ input_filenames_dict = {'HUGO_symb_entrez_uniprot': 'HugoGene_20200528.txt', 'PP
 expander_readme = st.expander(label='Read me first!', expanded=False)
 with expander_readme:
 	readme_msg = st.container()	
-					   
-expander_status = st.expander(label='MuXTalk progress status', expanded=True)
-with expander_status:
-	status_msg = st.container()	
 
-muxtalk_status = status_msg.text('Initializing MuXTalk...')	
+if (custom_GRN_edges is None) & (custom_GRN_parquet is None):
+				   
+	expander_status = st.expander(label='MuXTalk progress status', expanded=True)
+	with expander_status:
+		status_msg = st.container()	
 
-(KEGG_PPI_allnodes_entrez, GRN_KEGG_PPI_edges, PPI_all_edges_entrez, KEGG_PPI_all_edges_entrez, KEGG_PPI_allnodes_entrez_df, 
- KEGG_interaction_types_dict, KEGG_all_edges_entrez, KEGG_all_paths, KEGG_path_nodes_entrez_dict, 
- all_motif_types, all_motif_types_list) = process_data(proj_path, input_GRN, input_filenames_dict)
+	muxtalk_status = status_msg.text('Initializing MuXTalk for the default GRNs...')	
 
-KEGG_all_paths_sansIL17 = set(KEGG_all_paths) - set(['IL-17 signaling pathway'])
-st.session_state['KEGG_all_paths_sansIL17'] = KEGG_all_paths_sansIL17
+	(KEGG_PPI_allnodes_entrez, GRN_KEGG_PPI_edges, PPI_all_edges_entrez, KEGG_PPI_all_edges_entrez, KEGG_PPI_allnodes_entrez_df, 
+	 KEGG_interaction_types_dict, KEGG_all_edges_entrez, KEGG_all_paths, KEGG_path_nodes_entrez_dict, 
+	 all_motif_types, all_motif_types_list) = process_data(proj_path, input_GRN, input_filenames_dict)
 
-(A_GRN_sparr, A_PPI_sparr, A_KEGGPPI_sparr, A_KEGG_e_sparr_dict) = sparse_layers(KEGG_PPI_allnodes_entrez, GRN_KEGG_PPI_edges, 
-																				 PPI_all_edges_entrez, 
-																				 KEGG_all_edges_entrez, KEGG_PPI_all_edges_entrez, 
-																				 KEGG_interaction_types_dict)
+	KEGG_all_paths_sansIL17 = set(KEGG_all_paths) - set(['IL-17 signaling pathway'])
+	st.session_state['KEGG_all_paths_sansIL17'] = KEGG_all_paths_sansIL17
 
-G_PPI =  nx.from_scipy_sparse_matrix(A_PPI_sparr.astype(bool).astype(int))
-G_PPI_entrez = nx.relabel_nodes(G_PPI, KEGG_PPI_allnodes_entrez_df[[0, 'ix']].to_dict()[0])
-G_KEGGPPI = nx.from_scipy_sparse_matrix(A_KEGGPPI_sparr.astype(bool).astype(int))
-G_KEGGPPI_entrez = nx.relabel_nodes(G_KEGGPPI, KEGG_PPI_allnodes_entrez_df[[0, 'ix']].to_dict()[0])
+	(A_GRN_sparr, A_PPI_sparr, A_KEGGPPI_sparr, A_KEGG_e_sparr_dict) = sparse_layers(KEGG_PPI_allnodes_entrez, GRN_KEGG_PPI_edges, 
+																					 PPI_all_edges_entrez, 
+																					 KEGG_all_edges_entrez, KEGG_PPI_all_edges_entrez, 
+																					 KEGG_interaction_types_dict)
 
-st.session_state['G_PPI_entrez'] = G_PPI_entrez
-st.session_state['G_KEGGPPI_entrez'] = G_KEGGPPI_entrez
-st.session_state['KEGG_path_nodes_entrez_dict'] = KEGG_path_nodes_entrez_dict
-st.session_state['KEGG_PPI_allnodes_entrez_df'] = KEGG_PPI_allnodes_entrez_df
-st.session_state['A_GRN_sparr'] = A_GRN_sparr
-st.session_state['A_KEGG_e_sparr_dict'] = A_KEGG_e_sparr_dict
-st.session_state['A_KEGGPPI_sparr'] = A_KEGGPPI_sparr
-st.session_state['KEGG_interaction_types_dict'] = KEGG_interaction_types_dict
+	G_PPI =  nx.from_scipy_sparse_matrix(A_PPI_sparr.astype(bool).astype(int))
+	G_PPI_entrez = nx.relabel_nodes(G_PPI, KEGG_PPI_allnodes_entrez_df[[0, 'ix']].to_dict()[0])
+	G_KEGGPPI = nx.from_scipy_sparse_matrix(A_KEGGPPI_sparr.astype(bool).astype(int))
+	G_KEGGPPI_entrez = nx.relabel_nodes(G_KEGGPPI, KEGG_PPI_allnodes_entrez_df[[0, 'ix']].to_dict()[0])
 
+	st.session_state['G_PPI_entrez'] = G_PPI_entrez
+	st.session_state['G_KEGGPPI_entrez'] = G_KEGGPPI_entrez
+	st.session_state['KEGG_path_nodes_entrez_dict'] = KEGG_path_nodes_entrez_dict
+	st.session_state['KEGG_PPI_allnodes_entrez_df'] = KEGG_PPI_allnodes_entrez_df
+	st.session_state['A_GRN_sparr'] = A_GRN_sparr
+	st.session_state['A_KEGG_e_sparr_dict'] = A_KEGG_e_sparr_dict
+	st.session_state['A_KEGGPPI_sparr'] = A_KEGGPPI_sparr
+	st.session_state['KEGG_interaction_types_dict'] = KEGG_interaction_types_dict
 
-if MuXTalk_method == 'MuXTalk_between':
+	if MuXTalk_method == 'MuXTalk_between':
 
-	st.session_state['detected_ranked_pathway_pairs_df'] = pd.read_parquet(proj_path + input_GRN + '_between_detected_discovery.parquet')
+		st.session_state['detected_ranked_pathway_pairs_df'] = pd.read_parquet(proj_path + input_GRN + '_between_detected_discovery.parquet')
 				
-elif MuXTalk_method == 'MuXTalk_shortest':
+	elif MuXTalk_method == 'MuXTalk_shortest':
 
-	st.session_state['detected_ranked_pathway_pairs_df'] = pd.read_parquet(proj_path + input_GRN + '_shortest_sp%s_detected_discovery.parquet' % sp_threshold)
+		st.session_state['detected_ranked_pathway_pairs_df'] = pd.read_parquet(proj_path + input_GRN + '_shortest_sp%s_detected_discovery.parquet' % sp_threshold)
+
+elif (custom_GRN_edges is not None) & (custom_GRN_parquet is not None):
+
+	expander_status = st.expander(label='MuXTalk progress status', expanded=True)
+	with expander_status:
+		status_msg = st.container()	
+
+	muxtalk_status = status_msg.text('Initializing MuXTalk for the user-provided GRN...')	
+
+	(KEGG_PPI_allnodes_entrez, GRN_KEGG_PPI_edges, PPI_all_edges_entrez, KEGG_PPI_all_edges_entrez, KEGG_PPI_allnodes_entrez_df, 
+	 KEGG_interaction_types_dict, KEGG_all_edges_entrez, KEGG_all_paths, KEGG_path_nodes_entrez_dict, 
+	 all_motif_types, all_motif_types_list) = process_data_forStreamlit_customGRN(proj_path, custom_GRN_edges, input_filenames_dict)
+
+	KEGG_all_paths_sansIL17 = set(KEGG_all_paths) - set(['IL-17 signaling pathway'])
+	st.session_state['KEGG_all_paths_sansIL17'] = KEGG_all_paths_sansIL17
+
+	(A_GRN_sparr, A_PPI_sparr, A_KEGGPPI_sparr, A_KEGG_e_sparr_dict) = sparse_layers(KEGG_PPI_allnodes_entrez, GRN_KEGG_PPI_edges, 
+																					 PPI_all_edges_entrez, 
+																					 KEGG_all_edges_entrez, KEGG_PPI_all_edges_entrez, 
+																					 KEGG_interaction_types_dict)
+
+	G_PPI =  nx.from_scipy_sparse_matrix(A_PPI_sparr.astype(bool).astype(int))
+	G_PPI_entrez = nx.relabel_nodes(G_PPI, KEGG_PPI_allnodes_entrez_df[[0, 'ix']].to_dict()[0])
+	G_KEGGPPI = nx.from_scipy_sparse_matrix(A_KEGGPPI_sparr.astype(bool).astype(int))
+	G_KEGGPPI_entrez = nx.relabel_nodes(G_KEGGPPI, KEGG_PPI_allnodes_entrez_df[[0, 'ix']].to_dict()[0])
+
+	st.session_state['G_PPI_entrez'] = G_PPI_entrez
+	st.session_state['G_KEGGPPI_entrez'] = G_KEGGPPI_entrez
+	st.session_state['KEGG_path_nodes_entrez_dict'] = KEGG_path_nodes_entrez_dict
+	st.session_state['KEGG_PPI_allnodes_entrez_df'] = KEGG_PPI_allnodes_entrez_df
+	st.session_state['A_GRN_sparr'] = A_GRN_sparr
+	st.session_state['A_KEGG_e_sparr_dict'] = A_KEGG_e_sparr_dict
+	st.session_state['A_KEGGPPI_sparr'] = A_KEGGPPI_sparr
+	st.session_state['KEGG_interaction_types_dict'] = KEGG_interaction_types_dict
+
+	st.session_state['detected_ranked_pathway_pairs_df'] = pd.read_parquet(custom_GRN_parquet)
+	
+else:
+
+	st.error('Please ensure that both files are provided for the custom GRN.')
+	st.stop()
 
 expander_results = st.expander(label='MuXTalk prioritization results', expanded=True)
 with expander_results:
@@ -160,7 +203,6 @@ if MuXTalk_method == 'MuXTalk_between':
 		master_G.add_node(node, color='gold', size=10)	
 
 	for i, j, ie, je in multilink_edges_entrez_df[['Node 1 Gene Symbol', 'Node 2 Gene Symbol', 'Node 1 Entrez ID', 'Node 2 Entrez ID']].values:
-		print(i, j, ie, je)
 		if '-' not in multilink_type:
 			master_G.add_edge(ie, je, color='magenta', value=40, label=multilink_type)
 		else:
@@ -192,7 +234,6 @@ elif MuXTalk_method == 'MuXTalk_shortest':
 			master_G.add_node(node, color='gold', size=10)	
 			
 		for i, j, ie, je in multilink_edges_entrez_df[['Node 1 Gene Symbol', 'Node 2 Gene Symbol', 'Node 1 Entrez ID', 'Node 2 Entrez ID']].values:
-			print(i, j, ie, je)
 			if (ie not in st.session_state['KEGG_path_nodes_entrez_dict'][p1]) & (ie not in st.session_state['KEGG_path_nodes_entrez_dict'][p2]):
 				master_G.add_node(ie, size=10, color='darkgrey')
 			if (je not in st.session_state['KEGG_path_nodes_entrez_dict'][p1]) & (je not in st.session_state['KEGG_path_nodes_entrez_dict'][p2]):
@@ -244,7 +285,6 @@ elif MuXTalk_method == 'MuXTalk_shortest':
 			master_G.add_node(node, color='gold', size=10)	
 			
 		for i, j, ie, je in multilink_edges_entrez_df[['Node 1 Gene Symbol', 'Node 2 Gene Symbol', 'Node 1 Entrez ID', 'Node 2 Entrez ID']].values:
-			print(i, j, ie, je)
 			if (ie not in st.session_state['KEGG_path_nodes_entrez_dict'][p1]) & (ie not in st.session_state['KEGG_path_nodes_entrez_dict'][p2]):
 				master_G.add_node(ie, size=10, color='darkgrey')
 			if (je not in st.session_state['KEGG_path_nodes_entrez_dict'][p1]) & (je not in st.session_state['KEGG_path_nodes_entrez_dict'][p2]):
