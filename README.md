@@ -1,3 +1,10 @@
+<!-- To-do:
+- Hover functionality for the pyvis visualization
+- Option to limit the # of sps for sp>1 for visual clarity
+-  print out terminal in the progress status bar for details
+-   -->
+
+
 # MuXTalk
 
 A network-based statistical framework to explore crosstalk between signaling pathways.
