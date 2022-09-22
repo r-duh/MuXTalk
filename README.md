@@ -94,9 +94,9 @@ python3 run_MuXTalk.py --proj_path=/path/to/MuXTalk_Docker_mount/ --input_GRN=Hu
 
 |  |  |
 | --- | --- |
-| Gene A | Gene B |
-| Gene C | Gene D |
-| Gene E | Gene F |
+| Source Gene A | Target Gene B |
+| Source Gene C | Target Gene D |
+| Source Gene E | Target Gene F |
 | ... | ... |
  
 - When we run MuXTalk with --input_GRN=custom_GRN with customGRN_edges.csv in /path/to/MuXTalk_Docker_mount/, MuXTalk will create the randomized versions of the custom GRN and store them in the /customGRN_A_GRN_sparr_rand_npz_files/ folder. This folder is initially empty and is populated as MuXTalk runs. This step will have to be only done once per each new GRN. Here is an example that uses the same parameters but on a custom GRN provided by the user.
