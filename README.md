@@ -1,5 +1,5 @@
 <!-- To-do:
-- Hover functionality for the pyvis visualization
+- Hover functionality for the pyvis visualization -- https://stackoverflow.com/questions/70546467/further-editing-for-items-in-the-pyvis-tooltip
 - Option to limit the # of sps for sp>1 for visual clarity
 -  print out terminal in the progress status bar for details
 -   -->
