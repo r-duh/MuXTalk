@@ -14,7 +14,7 @@ from sklearn.metrics import auc
 import scipy.stats as st
 import statsmodels.stats.multitest as multi
 from itertools import islice
-import matplotlib.pyplot as plt
+
 
 
 # This version is made to incorporate the opposite signs in the KEGG signaling and GRN networks. It is meant for symmetric adj. matrices like the 
