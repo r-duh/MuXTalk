@@ -718,60 +718,6 @@ def overall_multilink_zscores_pvals(KEGG_all_paths, overall_multilink_counts_ran
                         
     return (overall_multilink_counts_stats_df_dict, overall_rand_zscores_df_dict)
 
-def plot_zscores_overall(overall_rand_zscores_df_dict, overall_multilink_counts_stats_df_dict, all_motif_types, proj_path, input_GRN, 
-                         save_fig=False):
-
-    # suppress the '00' types of multilink that throw off the ylim
-    overall_rand_zscores_df_dict['overall_multiplex'].loc['00'] = np.nan
-    overall_multilink_counts_stats_df_dict['overall_multiplex'].loc['00'] = np.nan         
-    
-    fig = plt.figure()
-    fig.set_size_inches(10, 5)
-    sns.set(font_scale=1.5)
-    with sns.axes_style('ticks'):
-
-        for p in ['overall_multiplex']:
-            
-            N_rand = overall_rand_zscores_df_dict[p].shape[1]
-            plt.subplot(111)
-            for i in np.arange(N_rand):
-                plt.scatter(x=overall_rand_zscores_df_dict[p].index, y=overall_rand_zscores_df_dict[p][i], marker='+', s=150, c='grey', alpha=0.5)
-
-            shapes = []
-            colors = []
-            for i in overall_multilink_counts_stats_df_dict[p].index:
-                if ((overall_multilink_counts_stats_df_dict[p].loc[i]['z-score'] > 0) & 
-                    (overall_multilink_counts_stats_df_dict[p].loc[i]['p-value'] <= 0.05)):
-                    shapes.append('^')
-                    colors.append('tomato')
-                elif ((overall_multilink_counts_stats_df_dict[p].loc[i]['z-score'] < 0) & 
-                      (overall_multilink_counts_stats_df_dict[p].loc[i]['p-value'] <= 0.05)):
-                    shapes.append('v')
-                    colors.append('dodgerblue')
-                elif (overall_multilink_counts_stats_df_dict[p].loc[i]['p-value'] > 0.05):
-                    shapes.append('o')
-                    colors.append('k')
-                else:
-                    shapes.append('')
-                    colors.append('w')     
-
-            for xp, yp, m, c in zip(overall_rand_zscores_df_dict[p].index, overall_multilink_counts_stats_df_dict[p]['z-score'], shapes, colors):
-                plt.scatter(x=xp, y=yp, marker=m, s=150, c=c)
-
-            plt.plot([-1, len(all_motif_types)+1], [0, 0], '-', color='k')
-            plt.xlim(-1, len(all_motif_types))
-            plt.xlabel('Multilink motif')
-            plt.ylabel('z-score')
-            plt.xticks(rotation=90)
-            plt.title('%s' % p)
-            ax = plt.gca()
-            ax.grid(which='major', axis='x', linestyle='--')
-            plt.tight_layout()
-        
-        if save_fig == True:
-            plt.savefig(proj_path + input_GRN + '_overall_multilink_zscores.pdf', format='pdf')
-        
-        plt.show()
 
 # multilink counts of the individual KEGG signaling pathways
 def multilink_counts(KEGG_all_paths, KEGG_PPI_allnodes_entrez_df, KEGG_path_nodes_entrez_dict, A_GRN_sparr, A_KEGGPPI_sparr, 
@@ -968,57 +914,6 @@ def multilink_zscores_pvals(KEGG_all_paths, multilink_counts_rand_df_dict, multi
             rand_zscores_df_dict = pickle.load(fp)      
                        
     return (multilink_counts_stats_df_dict, rand_zscores_df_dict)
-
-def plot_zscores(KEGG_all_paths, rand_zscores_df_dict, multilink_counts_stats_df_dict, all_motif_types, proj_path, input_GRN, save_fig=False):
-        
-    fig = plt.figure()
-    fig.set_size_inches(48, 60)
-    sns.set(font_scale=1.5)
-    with sns.axes_style('ticks'):
-
-        for nfig, p in enumerate(tqdm(KEGG_all_paths, position=0, leave=True)):
-            
-            # suppress the '00' types of multilink that throw off the ylim
-            rand_zscores_df_dict[p].loc['00'] = np.nan
-            multilink_counts_stats_df_dict[p].loc['00'] = np.nan     
-            
-            N_rand = rand_zscores_df_dict[p].shape[1]
-            plt.subplot(13, 5, nfig+1)
-            for i in np.arange(N_rand):
-                plt.scatter(x=rand_zscores_df_dict[p].index, y=rand_zscores_df_dict[p][i], marker='+', s=150, c='grey', alpha=0.5)
-
-            shapes = []
-            colors = []
-            for i in multilink_counts_stats_df_dict[p].index:
-                if (multilink_counts_stats_df_dict[p].loc[i]['z-score'] > 0) & (multilink_counts_stats_df_dict[p].loc[i]['p-value'] <= 0.05):
-                    shapes.append('^')
-                    colors.append('tomato')
-                elif (multilink_counts_stats_df_dict[p].loc[i]['z-score'] < 0) & (multilink_counts_stats_df_dict[p].loc[i]['p-value'] <= 0.05):
-                    shapes.append('v')
-                    colors.append('dodgerblue')
-                elif (multilink_counts_stats_df_dict[p].loc[i]['p-value'] > 0.05):
-                    shapes.append('o')
-                    colors.append('k')
-                else:
-                    shapes.append('')
-                    colors.append('w')     
-
-            for xp, yp, m, c in zip(rand_zscores_df_dict[p].index, multilink_counts_stats_df_dict[p]['z-score'], shapes, colors):
-                plt.scatter(x=xp, y=yp, marker=m, s=150, c=c)
-
-            plt.plot([-1, len(all_motif_types)+1], [0, 0], '-', color='k')
-            plt.xlim(-1, len(all_motif_types))
-            plt.xlabel('Multilink motif')
-            plt.ylabel('z-score')
-            plt.xticks(rotation=90)
-            plt.title('%s' % p)
-            ax = plt.gca()
-            ax.grid(which='major', axis='x', linestyle='--')
-            plt.tight_layout()
-        if save_fig == True:
-            plt.savefig(proj_path + input_GRN + '_multilink_zscores.pdf', format='pdf')
-        
-        plt.show()
 
 ### multilink counts of the edges between pairs of KEGG signaling pathways
 # note that the below is for the smaller subset of pathways that are in XTalkDB for cross-validation purposes
