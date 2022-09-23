@@ -22,7 +22,7 @@ This is perhaps the most straightforward choice for the general user and only re
 ```
 docker pull rduh/muxtalk:slim
 ```
-or loaded from the [.tar file](https://www.dropbox.com/s/dz8m1ydavx175u6/muxtalk_slim.tar?dl=0) using
+or loaded from the [.tar file](https://www.dropbox.com/s/2g8mjcvqnvwtijo/muxtalk_slim.tar?dl=0) using
 ```
 docker load --input muxtalk_slim.tar
 ```
