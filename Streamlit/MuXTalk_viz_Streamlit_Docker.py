@@ -8,7 +8,7 @@ st.set_page_config(layout='wide')
 
 st.sidebar.title(
 	'''
-	MuXTalk: Detecting and dissecting signaling crosstalk via multilayer networks
+	MuXTalk
 	***
 	
 	'''
@@ -17,6 +17,7 @@ st.sidebar.title(
 input_GRN = st.sidebar.selectbox('Select GRN', ['HumanGRN10e6', 'HumanGRN10e5', 'HumanGRN10e4'])	
 MuXTalk_method = st.sidebar.selectbox('Select MuXTalk type', ['MuXTalk_shortest', 'MuXTalk_between'])
 sp_threshold = st.sidebar.selectbox('Select shortest path threshold (MuXTalk_shortest only)', [2, 1, 'None'])
+st.sidebar.write(''' *** ''')
 custom_GRN_edges = st.sidebar.file_uploader('Custom GRN edges')
 custom_GRN_parquet = st.sidebar.file_uploader('Custom GRN parquet file')
 
@@ -39,6 +40,40 @@ input_filenames_dict = {'HUGO_symb_entrez_uniprot': 'HugoGene_20200528.txt', 'PP
 expander_readme = st.expander(label='Read me first!', expanded=False)
 with expander_readme:
 	readme_msg = st.container()	
+	readme_msg.write('''
+	
+	**MuXTalk: Detecting and dissecting signaling crosstalk via multilayer networks.** A network-based statistical 
+	framework to explore crosstalk between signaling pathways.\n
+	**Reference:** \n	
+	This is the visualization component of the [MuXTalk framework](https://github.com/r-duh/MuXTalk), 
+	where users can explore the crosstalk between 60 pairs of KEGG pathways. There are two options to use 
+	this MuXTalk visualization app: \n
+	1) Using the "default" human gene regulatory networks (GRNs) presented in the manuscript as input. 
+	For this option, you can simply select the desired GRN (from the least dense (HumanGRN10e-6) to the densest 
+	(HumanGRN10e-6) network) and choose which MuXTalk method to use. \n
+	2) Using custom GRNs as input. For this  option, you first need to run MuXTalk with the custom GRN following the 
+	instructions on the [GitHub page](https://github.com/r-duh/MuXTalk). After running MuXTalk, you can use its output 
+	for visualization. You will need to provide two files: \n
+	- The custom GRN edgelist file. This file should consist of two columns, without headers, the first one for 
+	the source gene (or transcription factor) and the second one for the target gene, 
+	as described on the GitHub page. This is also the file you used with MuXTalk as the input_GRN 
+	edgelist file ("customGRN_edges.csv"). \n
+	- The output of MuXTalk in .parquet format, which includes the list of prioritized pathway pairs predicted by MuXTalk
+	("..._detected_discovery.parquet").\n	
+	Once the MuXTalk options are selected or custom GRN files are uploaded, this Streamlit app will initialize the 
+	networks for visualization and display the ranked list of pathway pairs. You can inspect this list for the pathway
+	pairs that are the most likely to crosstalk as per the MuXTalk algorithm. \n
+	After Pathway A and Pathway B are chosen, the corresponding significant multilink types that MuXTalk predicted to 
+	mediate the crosstalk will auto-populate the "Select multilink type" dropdown menu. \n
+	Choosing the multilink type will create a table that shows the edges of that multilink type and the Gene Symbols and
+	Entrez IDs of the nodes that are connected by those edges.\n
+	Once the network visualization is generated, you can toggle edge descriptions (this feature is off by default for
+	visual clarity), zoom in and out and adjust the physics parameters and layout options for the visualization for the 
+	desired output.
+		
+	''')
+
+
 
 if (custom_GRN_edges is None) & (custom_GRN_parquet is None):
 				   
@@ -166,16 +201,26 @@ elif MuXTalk_method == 'MuXTalk_between':
 	
 st.write(multilink_edges_entrez_df[['Node 1 Gene Symbol', 'Node 2 Gene Symbol', 'Node 1 Entrez ID', 'Node 2 Entrez ID']])
 
+show_edge_labels = st.checkbox('Show edge labels')
+
 subG_PPI_p1 = nx.Graph(nx.subgraph(st.session_state['G_PPI_entrez'], st.session_state['KEGG_path_nodes_entrez_dict'][p1]))
 subG_PPI_p2 = nx.Graph(nx.subgraph(st.session_state['G_PPI_entrez'], st.session_state['KEGG_path_nodes_entrez_dict'][p2]))
+
+KEGG_all_edges_entrez = KEGG_all_edges_entrez[~pd.isnull(KEGG_all_edges_entrez['Edge_subtype'])]
 subG_KEGG_p1 = nx.DiGraph()
 for e1, e2, e in KEGG_all_edges_entrez[KEGG_all_edges_entrez['Path_label']==p1][['NCBI Gene ID(supplied by NCBI)_x', 'NCBI Gene ID(supplied by NCBI)_y', 'Edge_subtype']].values:
-	subG_KEGG_p1.add_edge(e1, e2, label=e) 
+	if show_edge_labels:
+		subG_KEGG_p1.add_edge(e1, e2, label=e)
+	else:
+		subG_KEGG_p1.add_edge(e1, e2, label='')
+
 subG_KEGG_p2 = nx.DiGraph()
 for e1, e2, e in KEGG_all_edges_entrez[KEGG_all_edges_entrez['Path_label']==p2][['NCBI Gene ID(supplied by NCBI)_x', 'NCBI Gene ID(supplied by NCBI)_y', 'Edge_subtype']].values:
-	subG_KEGG_p2.add_edge(e1, e2, label=e) 
-
-
+	if show_edge_labels:
+		subG_KEGG_p2.add_edge(e1, e2, label=e) 
+	else:
+		subG_KEGG_p2.add_edge(e1, e2, label='')
+		
 nt = Network('500px', '800px', directed=True, bgcolor='k', font_color='m')
 master_G = nx.DiGraph()
 
@@ -185,28 +230,49 @@ if MuXTalk_method == 'MuXTalk_between':
 		master_G.add_node(node, color='tomato', size=10)
 	for e1, e2, in list(subG_PPI_p1.edges()):
 		if (e1, e2) not in subG_KEGG_p1.edges():
-			master_G.add_edge(e1, e2, color='lightgrey', label='PPI')
-			master_G.add_edge(e2, e1, color='lightgrey', label='PPI')
+			if show_edge_labels:
+				master_G.add_edge(e1, e2, color='lightgrey', label='PPI')
+				master_G.add_edge(e2, e1, color='lightgrey', label='PPI')
+			else:
+				master_G.add_edge(e1, e2, color='lightgrey', label='')
+				master_G.add_edge(e2, e1, color='lightgrey', label='')			
 	for e1, e2, in list(subG_KEGG_p1.edges()):
-		master_G.add_edge(e1, e2, color='grey', label=subG_KEGG_p1[e1][e2]['label'])
-		
+		if show_edge_labels:
+			master_G.add_edge(e1, e2, color='grey', label=subG_KEGG_p1[e1][e2]['label'])
+		else:
+			master_G.add_edge(e1, e2, color='grey', label='')
+			
 	for node in st.session_state['KEGG_path_nodes_entrez_dict'][p2]:
 		master_G.add_node(node, color='dodgerblue', size=10)
 	for e1, e2, in list(subG_PPI_p2.edges()):
-		if (e1, e2) not in subG_KEGG_p1.edges():
-			master_G.add_edge(e1, e2, color='lightgrey', label='PPI')
-			master_G.add_edge(e2, e1, color='lightgrey', label='PPI')
+		if (e1, e2) not in subG_KEGG_p2.edges():
+			if show_edge_labels:
+				master_G.add_edge(e1, e2, color='lightgrey', label='PPI')
+				master_G.add_edge(e2, e1, color='lightgrey', label='PPI')
+			else:
+				master_G.add_edge(e1, e2, color='lightgrey', label='')
+				master_G.add_edge(e2, e1, color='lightgrey', label='')			
+			
 	for e1, e2, in list(subG_KEGG_p2.edges()):
-		master_G.add_edge(e1, e2, color='grey', label=subG_KEGG_p2[e1][e2]['label'])
-		
+		if show_edge_labels:
+			master_G.add_edge(e1, e2, color='grey', label=subG_KEGG_p2[e1][e2]['label'])
+		else:
+			master_G.add_edge(e1, e2, color='grey', label='')
+			
 	for node in set(st.session_state['KEGG_path_nodes_entrez_dict'][p1]) & set(st.session_state['KEGG_path_nodes_entrez_dict'][p2]):
 		master_G.add_node(node, color='gold', size=10)	
 
 	for i, j, ie, je in multilink_edges_entrez_df[['Node 1 Gene Symbol', 'Node 2 Gene Symbol', 'Node 1 Entrez ID', 'Node 2 Entrez ID']].values:
 		if '-' not in multilink_type:
-			master_G.add_edge(ie, je, color='magenta', value=40, label=multilink_type)
+			if show_edge_labels:
+				master_G.add_edge(ie, je, color='magenta', value=40, label=multilink_type)
+			else:
+				master_G.add_edge(ie, je, color='magenta', value=40, label='')
 		else:
-			master_G.add_edge(je, ie, color='magenta', value=40, label=multilink_type)
+			if show_edge_labels:
+				master_G.add_edge(je, ie, color='magenta', value=40, label=multilink_type)
+			else:
+				master_G.add_edge(je, ie, color='magenta', value=40, label='')
 			
 elif MuXTalk_method == 'MuXTalk_shortest':
 
@@ -216,19 +282,35 @@ elif MuXTalk_method == 'MuXTalk_shortest':
 			master_G.add_node(node, color='tomato', size=10)
 		for e1, e2, in list(subG_PPI_p1.edges()):
 			if (e1, e2) not in subG_KEGG_p1.edges():
-				master_G.add_edge(e1, e2, color='lightgrey', label='PPI')
-				master_G.add_edge(e2, e1, color='lightgrey', label='PPI')
+				if show_edge_labels:
+					master_G.add_edge(e1, e2, color='lightgrey', label='PPI')
+					master_G.add_edge(e2, e1, color='lightgrey', label='PPI')
+				else:
+					master_G.add_edge(e1, e2, color='lightgrey', label='')
+					master_G.add_edge(e2, e1, color='lightgrey', label='')
+									
 		for e1, e2, in list(subG_KEGG_p1.edges()):
-			master_G.add_edge(e1, e2, color='grey', label=subG_KEGG_p1[e1][e2]['label'])
+			if show_edge_labels:
+				master_G.add_edge(e1, e2, color='grey', label=subG_KEGG_p1[e1][e2]['label'])
+			else:
+				master_G.add_edge(e1, e2, color='grey', label='')
 		
 		for node in st.session_state['KEGG_path_nodes_entrez_dict'][p2]:
 			master_G.add_node(node, color='dodgerblue', size=10)
 		for e1, e2, in list(subG_PPI_p2.edges()):
-			if (e1, e2) not in subG_KEGG_p1.edges():
-				master_G.add_edge(e1, e2, color='lightgrey', label='PPI')
-				master_G.add_edge(e2, e1, color='lightgrey', label='PPI')
+			if (e1, e2) not in subG_KEGG_p2.edges():
+				if show_edge_labels:
+					master_G.add_edge(e1, e2, color='lightgrey', label='PPI')
+					master_G.add_edge(e2, e1, color='lightgrey', label='PPI')
+				else:
+					master_G.add_edge(e1, e2, color='lightgrey', label='')
+					master_G.add_edge(e2, e1, color='lightgrey', label='')				
+				
 		for e1, e2, in list(subG_KEGG_p2.edges()):
-			master_G.add_edge(e1, e2, color='grey', label=subG_KEGG_p2[e1][e2]['label'])
+			if show_edge_labels:
+				master_G.add_edge(e1, e2, color='grey', label=subG_KEGG_p2[e1][e2]['label'])
+			else:
+				master_G.add_edge(e1, e2, color='grey', label='')
 		
 		for node in set(st.session_state['KEGG_path_nodes_entrez_dict'][p1]) & set(st.session_state['KEGG_path_nodes_entrez_dict'][p2]):
 			master_G.add_node(node, color='gold', size=10)	
@@ -257,9 +339,16 @@ elif MuXTalk_method == 'MuXTalk_shortest':
 					master_G.add_edge(je, jj, color='plum', value=40)
 								
 			if '-' not in multilink_type:
-				master_G.add_edge(ie, je, color='magenta', value=40, label=multilink_type)
+				if show_edge_labels:
+					master_G.add_edge(ie, je, color='magenta', value=40, label=multilink_type)
+				else:
+					master_G.add_edge(ie, je, color='magenta', value=40, label='')
+		
 			else:
-				master_G.add_edge(je, ie, color='magenta', value=40, label=multilink_type)					
+				if show_edge_labels:
+					master_G.add_edge(je, ie, color='magenta', value=40, label=multilink_type)	
+				else:
+					master_G.add_edge(je, ie, color='magenta', value=40, label='')
 						
 	else:
 
@@ -267,19 +356,35 @@ elif MuXTalk_method == 'MuXTalk_shortest':
 			master_G.add_node(node, color='tomato', size=10)
 		for e1, e2, in list(subG_PPI_p1.edges()):
 			if (e1, e2) not in subG_KEGG_p1.edges():
-				master_G.add_edge(e1, e2, color='lightgrey', label='PPI')
-				master_G.add_edge(e2, e1, color='lightgrey', label='PPI')
+				if show_edge_labels:
+					master_G.add_edge(e1, e2, color='lightgrey', label='PPI')
+					master_G.add_edge(e2, e1, color='lightgrey', label='PPI')
+				else:
+					master_G.add_edge(e1, e2, color='lightgrey', label='')
+					master_G.add_edge(e2, e1, color='lightgrey', label='')	
+								
 		for e1, e2, in list(subG_KEGG_p1.edges()):
-			master_G.add_edge(e1, e2, color='grey', label=subG_KEGG_p1[e1][e2]['label'])
-		
+			if show_edge_labels:
+				master_G.add_edge(e1, e2, color='grey', label=subG_KEGG_p1[e1][e2]['label'])
+			else:
+				master_G.add_edge(e1, e2, color='grey', label='')
+				
 		for node in st.session_state['KEGG_path_nodes_entrez_dict'][p2]:
 			master_G.add_node(node, color='dodgerblue', size=10)
 		for e1, e2, in list(subG_PPI_p2.edges()):
-			if (e1, e2) not in subG_KEGG_p1.edges():
-				master_G.add_edge(e1, e2, color='lightgrey', label='PPI')
-				master_G.add_edge(e2, e1, color='lightgrey', label='PPI')
+			if (e1, e2) not in subG_KEGG_p2.edges():
+				if show_edge_labels:
+					master_G.add_edge(e1, e2, color='lightgrey', label='PPI')
+					master_G.add_edge(e2, e1, color='lightgrey', label='PPI')
+				else:
+					master_G.add_edge(e1, e2, color='lightgrey', label='')
+					master_G.add_edge(e2, e1, color='lightgrey', label='')	
+								
 		for e1, e2, in list(subG_KEGG_p2.edges()):
-			master_G.add_edge(e1, e2, color='grey', label=subG_KEGG_p2[e1][e2]['label'])
+			if show_edge_labels:
+				master_G.add_edge(e1, e2, color='grey', label=subG_KEGG_p2[e1][e2]['label'])
+			else:
+				master_G.add_edge(e1, e2, color='grey', label='')
 		
 		for node in set(st.session_state['KEGG_path_nodes_entrez_dict'][p1]) & set(st.session_state['KEGG_path_nodes_entrez_dict'][p2]):
 			master_G.add_node(node, color='gold', size=10)	
@@ -330,9 +435,15 @@ elif MuXTalk_method == 'MuXTalk_shortest':
 				master_G.add_edge(e1, e2, color='plum', value=20)
 				
 			if '-' not in multilink_type:
-				master_G.add_edge(ie, je, color='magenta', value=40, label=multilink_type)
+				if show_edge_labels:
+					master_G.add_edge(ie, je, color='magenta', value=40, label=multilink_type)
+				else:
+					master_G.add_edge(ie, je, color='magenta', value=40, label='')				
 			else:
-				master_G.add_edge(je, ie, color='magenta', value=40, label=multilink_type)
+				if show_edge_labels:
+					master_G.add_edge(je, ie, color='magenta', value=40, label=multilink_type)
+				else:
+					master_G.add_edge(je, ie, color='magenta', value=40, label='')
 
 master_G = nx.relabel_nodes(master_G, st.session_state['KEGG_PPI_allnodes_entrez_df'].set_index(0).to_dict()['Approved symbol'])
 nt.from_nx(master_G)					
@@ -346,7 +457,7 @@ components.html(source_html, height=900, width=900)
 	
 expander1 = st.expander(label='Tips for adjusting network physics parameters')
 with expander1:
-	':bulb: To "cool down" the networks, i.e. keep the nodes from moving, you can decrease gravitational constant (e.g. to ~ -20,000)\
+	':bulb: For a fast convergence, we recommend to use the solver "forceAtlas2Based." To "cool down" the networks, i.e. keep the nodes from moving, you can decrease gravitational constant (e.g. to ~ -20,000)\
 	and increase damping (e.g. to ~ 0.3). To stop physics from being implemented altogether and to be able to move nodes freely\
 	simply check off the "enable" box.'			
 																					
