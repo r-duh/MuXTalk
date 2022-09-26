@@ -7,7 +7,7 @@
 
 # MuXTalk: Detecting and dissecting signaling crosstalk via multilayer networks. 
 
-A network-based statistical framework to explore crosstalk between signaling pathways.
+A network-based statistical framework to predict and explore crosstalk between signaling pathways.
 
 **Preprint URL:** 
 
