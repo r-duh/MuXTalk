@@ -9,8 +9,7 @@ st.set_page_config(layout='wide')
 st.sidebar.title(
 	'''
 	MuXTalk
-	***
-	
+	***	
 	'''
 )
 
@@ -23,10 +22,8 @@ custom_GRN_parquet = st.sidebar.file_uploader('Custom GRN parquet file')
 
 with st.container():
 	'''
-	# **MuXTalk:** Detecting and dissecting signaling crosstalk via multilayer networks
-	
+	# **MuXTalk:** Detecting and dissecting signaling crosstalk via multilayer networks	
 	***
-	
 	'''
 
 proj_path = '/Volumes/Partition1/Pathway_crosstalk_files/MuXTalk_for_Docker_final/'
@@ -36,6 +33,14 @@ input_filenames_dict = {'HUGO_symb_entrez_uniprot': 'HugoGene_20200528.txt', 'PP
 						'almen_etal': 'almen_etal_12915_2009_258_MOESM1_ESM.csv', 
 						'lambert_etal': 'lambert_etal_1-s2.0-S0092867418301065-mmc2_TableS1.csv'
 					   }
+					   
+multilink_annot = {}
+multilink_annot['signaling'] = {0: 'No edge', 1: 'Activation', 2: 'Binding/association', 3: 'Compound',
+                                4: 'Dephosphorylation', 5: 'Dissociation', 6: 'Indirect effect', 7: 'Inhibition', 
+                                8: 'Phosphorylation', 9: 'PPI', 10: 'State change', 11: 'Ubiquitination'}
+multilink_annot['regulatory'] = {-1: '(B->A)', 0: 'No edge', 1: '(A->B)'}
+multilink_annot_dict = {'%s%s' % (i, j): 'Signaling edge type: %s; Regulatory edge direction: %s' % (multilink_annot['signaling'][i], multilink_annot['regulatory'][j]) for i, j in 
+                        product(multilink_annot['signaling'].keys(), multilink_annot['regulatory'].keys())}				
 					   
 expander_readme = st.expander(label='Read me first!', expanded=False)
 with expander_readme:
@@ -48,10 +53,10 @@ with expander_readme:
 	This is the visualization component of the [MuXTalk framework](https://github.com/r-duh/MuXTalk), 
 	where users can explore the crosstalk between 60 pairs of KEGG pathways. There are two options to use 
 	this MuXTalk visualization app: \n
-	1) Using the "default" human gene regulatory networks (GRNs) presented in the manuscript as input. 
+	1) Using the **default** human gene regulatory networks (GRNs) presented in the manuscript as input. 
 	For this option, you can simply select the desired GRN (from the least dense (HumanGRN10e-6) to the densest 
 	(HumanGRN10e-6) network) and choose which MuXTalk method to use. \n
-	2) Using custom GRNs as input. For this  option, you first need to run MuXTalk with the custom GRN following the 
+	2) Using **custom GRNs** as input. For this  option, you first need to run MuXTalk with the custom GRN following the 
 	instructions on the [GitHub page](https://github.com/r-duh/MuXTalk). After running MuXTalk, you can use its output 
 	for visualization. You will need to provide two files: \n
 	- The custom GRN edgelist file. This file should consist of two columns, without headers, the first one for 
@@ -60,20 +65,59 @@ with expander_readme:
 	edgelist file ("customGRN_edges.csv"). \n
 	- The output of MuXTalk in .parquet format, which includes the list of prioritized pathway pairs predicted by MuXTalk
 	("..._detected_discovery.parquet").\n	
-	Once the MuXTalk options are selected or custom GRN files are uploaded, this Streamlit app will initialize the 
+	Once the MuXTalk options are selected or custom GRN files are uploaded, this Streamlit app will **initialize** the 
 	networks for visualization and display the ranked list of pathway pairs. You can inspect this list for the pathway
 	pairs that are the most likely to crosstalk as per the MuXTalk algorithm. \n
-	After Pathway A and Pathway B are chosen, the corresponding significant multilink types that MuXTalk predicted to 
+	After Pathway A and Pathway B are chosen, the corresponding **significant multilink types** that MuXTalk predicted to 
 	mediate the crosstalk will auto-populate the "Select multilink type" dropdown menu. \n
 	Choosing the multilink type will create a table that shows the edges of that multilink type and the Gene Symbols and
 	Entrez IDs of the nodes that are connected by those edges.\n
-	Once the network visualization is generated, you can toggle edge descriptions (this feature is off by default for
+	Once the **network visualization** is generated, you can toggle edge descriptions (this feature is off by default for
 	visual clarity), zoom in and out and adjust the physics parameters and layout options for the visualization for the 
-	desired output.
+	desired output.\n
+	For the multilink definitions and color codings, refer to the **Legend** box.\n
 		
 	''')
 
-
+legend_readme = st.expander(label='Legend', expanded=False)
+with legend_readme:
+	legend_readme_msg = st.container()	
+	legend_readme_msg.write('''
+	Multilinks are coded in the form (S, R) where S and R are integers encoding the type of signaling and regulatory interaction.
+	R can be 1, -1 or 0, corresponding to a transcriptional regulatory edge (i.e., from a transcription factor to its target) 
+	from Pathway A to Pathway B, Pathway B to Pathway A, and no edge, respectively. Signaling edge types S are encoded 
+	as below: \n 
+	
+	| Signaling edge index S | Signaling edge type|
+	| --- | --- |
+	| 0 | No edge |
+	| 1 | Activation |
+	| 2 | Binding/association |
+	| 3 | Compound |
+	| 4 | Dephosphorylation |
+	| 5 | Dissociation |
+	| 6 | Indirect effect |
+	| 7 | Inhibition |
+	| 8 | Phosphorylation |
+	| 9 | PPI |
+	| 10 | State change |
+	| 11 | Ubiquitination | \n
+	In the visualization, the node and edge color coding is as below:\n
+	
+	| Color | Edge |
+	| --- | --- |
+	| Dark grey | Signaling edges from KEGG |
+	| Grey |PPI edges |
+	| Magenta | Edges of the selected significant multilink type |
+	| Pale pink | Edges connecting the significant multilinks to either pathway (for MuXTalk_shortest only) |\n
+	
+	| Color | Node |
+	| --- | --- |
+	| Red | Genes in Pathway A |
+	| Blue | Genes in Pathway B |
+	| Orange |  Genes in both Pathway A and Pathway B |\n
+	
+	''')
 
 if (custom_GRN_edges is None) & (custom_GRN_parquet is None):
 				   
@@ -177,8 +221,9 @@ elif '%s-%s' % (p1, p2) not in st.session_state['detected_ranked_pathway_pairs_d
 	st.error('MuXTalk did not find any statistically significant multilink types between these two pathways. Please choose another pair of pathways to visualize.')
 	st.stop()	
 		
-form_cols_selectmultilink = st.columns(2)
-multilink_type = form_cols_selectmultilink[0].selectbox('Select multilink type', st.session_state['detected_ranked_pathway_pairs_df'].loc['%s-%s' % (p1, p2)]['sig multilink types'])
+form_cols_selectmultilink = st.columns(1)
+multilink_annot_list = ['%s (%s)' %(i, multilink_annot_dict[i]) for i in  st.session_state['detected_ranked_pathway_pairs_df'].loc['%s-%s' % (p1, p2)]['sig multilink types']]
+multilink_type = form_cols_selectmultilink[0].selectbox('Select multilink type', multilink_annot_list).split(' (')[0]
 	
 if MuXTalk_method == 'MuXTalk_shortest':	
 
@@ -449,18 +494,20 @@ master_G = nx.relabel_nodes(master_G, st.session_state['KEGG_PPI_allnodes_entrez
 nt.from_nx(master_G)					
 nt.show_buttons(filter_=["physics"])
 
-nt.show('nx.html')
-f_html = open('nx.html', 'r', encoding='utf-8')
+nt.show('muxtalk_nx.html')
+f_html = open('muxtalk_nx.html', 'r', encoding='utf-8')
 source_html =  f_html.read()
 components.html(source_html, height=900, width=900)
 	
 	
-expander1 = st.expander(label='Tips for adjusting network physics parameters')
-with expander1:
-	':bulb: For a fast convergence, we recommend to use the solver "forceAtlas2Based." To "cool down" the networks, i.e. keep the nodes from moving, you can decrease gravitational constant (e.g. to ~ -20,000)\
-	and increase damping (e.g. to ~ 0.3). To stop physics from being implemented altogether and to be able to move nodes freely\
-	simply check off the "enable" box.'			
+tips_expander = st.expander(label='Tips for adjusting network visulaziation parameters')
+with tips_expander:
+	tips_msg = st.container()	
+	tips_msg.write('''
+	- For fast convergence and visual clarity, we recommend to use the solver "forceAtlas2Based."
+	- To be able to move nodes freely, check off the "enable" box.
+	- To "cool down" the networks, i.e. keep the nodes from moving, you can decrease gravitational constant (e.g. to ~ -20,000)\
+	and increase damping (e.g. to ~ 0.3). 
+	''')			
 																					
-			
-		
-			
+						
