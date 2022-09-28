@@ -170,9 +170,8 @@ Then, run the streamlit run by typing
 streamlit run MuXTalk_viz_Streamlit_Docker.py
 ```
 
-
-
-.parquet files that are output by the MuXTalk script can be used as input to the Streamlit app. 
+### Visualizing custom GRNs using the MuXTalk Streamlit app
+The .parquet files that are output by the MuXTalk script (details described above) can be used as input to the Streamlit app by a simple drag-and-drop on the app.
 
 
 ## Troubleshooting
