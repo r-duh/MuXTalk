@@ -44,7 +44,7 @@ conda create -n muxtalk python=3.8
 ```
 conda activate muxtalk
 ```
-- Install the dependencies needed by MuXTalk using the requirements.txt file in /path/to/MuXTalk_Docker_mount/
+- Install the dependencies needed by MuXTalk using the requirements.txt file in /path/to/MuXTalk_Docker_mount/ (also available in the project GitHub [page]())
 ```
 conda install --file /path/to/MuXTalk_Docker_mount/requirements.txt
 ```
@@ -155,7 +155,7 @@ conda create -n muxtalk_streamlit python=3.8
 ```
 conda activate muxtalk_streamlit
 ```
-- Install the dependencies needed by MuXTalk using the requirements.txt file in /path/to/MuXTalk_Docker_mount/ (also available in the project GitHub page)
+- Install the dependencies needed by MuXTalk using the requirements.txt file in /path/to/MuXTalk_Docker_mount/ (also available in the project GitHub [page](https://github.com/r-duh/MuXTalk/blob/main/Streamlit/requirements.txt)).
 ```
 conda install --file /path/to/MuXTalk_Streamlit_Docker_mount/requirements.txt
 ```
