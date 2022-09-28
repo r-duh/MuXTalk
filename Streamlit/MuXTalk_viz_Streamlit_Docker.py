@@ -26,7 +26,7 @@ with st.container():
 	***
 	'''
 
-proj_path = '/Volumes/Partition1/Pathway_crosstalk_files/MuXTalk_for_Docker_final/'
+proj_path = '/MuXTalk_Streamlit_app/'
 input_filenames_dict = {'HUGO_symb_entrez_uniprot': 'HugoGene_20200528.txt', 'PPI_Cheng_2019_data': 'PPI_Cheng_NatComms2019.csv',
 					   'KEGG_all_nodes_df': 'KEGG_expanded_all_nodes.csv', 'KEGG_all_edges_df': 'KEGG_expanded_all_edges.csv',
 						'df_motinf' : 'cisbpall_motinf.txt', 'XTalk_DB': 'XTalkDB_crosstalk.csv', 
@@ -139,9 +139,9 @@ if (custom_GRN_edges is None) & (custom_GRN_parquet is None):
 																					 KEGG_all_edges_entrez, KEGG_PPI_all_edges_entrez, 
 																					 KEGG_interaction_types_dict)
 
-	G_PPI =  nx.from_scipy_sparse_matrix(A_PPI_sparr.astype(bool).astype(int))
+	G_PPI =  nx.from_scipy_sparse_array(A_PPI_sparr.astype(bool).astype(int))
 	G_PPI_entrez = nx.relabel_nodes(G_PPI, KEGG_PPI_allnodes_entrez_df[[0, 'ix']].to_dict()[0])
-	G_KEGGPPI = nx.from_scipy_sparse_matrix(A_KEGGPPI_sparr.astype(bool).astype(int))
+	G_KEGGPPI = nx.from_scipy_sparse_array(A_KEGGPPI_sparr.astype(bool).astype(int))
 	G_KEGGPPI_entrez = nx.relabel_nodes(G_KEGGPPI, KEGG_PPI_allnodes_entrez_df[[0, 'ix']].to_dict()[0])
 
 	st.session_state['G_PPI_entrez'] = G_PPI_entrez
@@ -181,9 +181,9 @@ elif (custom_GRN_edges is not None) & (custom_GRN_parquet is not None):
 																					 KEGG_all_edges_entrez, KEGG_PPI_all_edges_entrez, 
 																					 KEGG_interaction_types_dict)
 
-	G_PPI =  nx.from_scipy_sparse_matrix(A_PPI_sparr.astype(bool).astype(int))
+	G_PPI =  nx.from_scipy_sparse_array(A_PPI_sparr.astype(bool).astype(int))
 	G_PPI_entrez = nx.relabel_nodes(G_PPI, KEGG_PPI_allnodes_entrez_df[[0, 'ix']].to_dict()[0])
-	G_KEGGPPI = nx.from_scipy_sparse_matrix(A_KEGGPPI_sparr.astype(bool).astype(int))
+	G_KEGGPPI = nx.from_scipy_sparse_array(A_KEGGPPI_sparr.astype(bool).astype(int))
 	G_KEGGPPI_entrez = nx.relabel_nodes(G_KEGGPPI, KEGG_PPI_allnodes_entrez_df[[0, 'ix']].to_dict()[0])
 
 	st.session_state['G_PPI_entrez'] = G_PPI_entrez
