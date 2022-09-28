@@ -162,10 +162,10 @@ conda install --file /path/to/MuXTalk_Streamlit_Docker_mount/requirements.txt
 - You have now created a new conda environment and installed in it all the packages the MuXTalk Streamlit app needs to run. The only remaining step is to run it. First, navigate to /path/to/MuXTalk_Streamlit_Docker_mount/
 ```
 cd /path/to/MuXTalk_Streamlit_Docker_mount/
- ```
-
 ```
-
+Then, run the streamlit run by typing
+```
+streamlit run MuXTalk_viz_Streamlit_Docker.py
 ```
 
 
