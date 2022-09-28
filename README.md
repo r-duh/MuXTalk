@@ -183,14 +183,9 @@ In the event that the Docker container quits with or without errors, the followi
 docker run -it --memory 12g --memory-swap -1 -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm rduh/muxtalk:slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
 ```
 
-
 <br>
 <br>
 <br>
-<br>
-
-
-
 
 
 <!-- Additional considerations:
@@ -206,18 +201,7 @@ https://www.dropbox.com/s/z14qywvqsa3mkqw/HumanGRN10e6_A_GRN_sparr_rand_dict_500
 
 
 # Contact:
-Created and maintained by Arda Halu. Please feel free to reach out for requests for assistance. email: arda.halu@channing.harvard.edu
-
-
-
-
-
- 
-
-
-
-
-
+Created and maintained by Arda Halu. For requests for assistance, email arda.halu@channing.harvard.edu.
 
 
 
