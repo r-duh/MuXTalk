@@ -125,6 +125,51 @@ The basic workflow of MuXTalk consists of the following functions:
 
 ## Running the MuXTalk Streamit app (recommended to visually explore both the default GRNs and custom GRNs)
 
+The steps to run the MuXTalk Streamlit app are very similar to those of the MuXTalk algorithm above. We have two options: 
+
+#### 1) Run MuXTalk Streamlit app as a Docker container (requires Docker installation -- see https://docs.docker.com/get-docker/ for installation instructions). This option is somewhat slower to run but has the advantage of not depending on the specific package environment and operating system of the user.
+
+- Once Docker is installed, the MuXTalk image "rduh/muxtalk-streamlit:slim" can either be pulled from Docker Hub
+```
+docker pull rduh/muxtalk-streamlit:slim
+```
+or loaded from the [.tar file]() using
+```
+docker load --input muxtalk_streamlit_slim.tar
+```
+
+- [Download](https://www.dropbox.com/sh/ztlc8spxyvu5cgn/AABVSaaTLQQUrs3_SwLo-B8ca?dl=0) the MuXTalk folder to be mounted as a volume to the Docker container. This local folder (i.e., located in the user's machine), named /MuXTalk_Streamlit_Docker_mount/, will act as the main folder in which MuXTalk Streamlit app's container will read and write files.
+
+- To run the MuXTalk Streamlit app as a Docker container, type in the below command in the terminal. /path/to/MuXTalk_Streamlit_Docker_mount/ is where the folder you downloaded above is located in your computer. Details about the MuXTalk visualization parameters can be found in the readme within the app.
+```
+docker run -it -v /path/to/MuXTalk_Streamlit_Docker_mount/:/MuXTalk_Streamlit_app/ -p 8501:8501 rduh/muxtalk-streamlit:slim
+```
+
+#### 2) Run the MuXTalk Streamlit app script directly (requires conda to be installed). This is the much faster option but requires familiarity with creating environments and running scripts.
+If not already done so, install [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) on your system. Next, type the following commands in your command prompt, or terminal, in the following order to set up and run MuXTalk.
+- Create a new environment named "muxtalk_streamlit" (or any name of your choosing) for MuXTalk using conda: 
+```
+conda create -n muxtalk_streamlit python=3.8
+```
+- Activate the newly created Conda environment:
+```
+conda activate muxtalk_streamlit
+```
+- Install the dependencies needed by MuXTalk using the requirements.txt file in /path/to/MuXTalk_Docker_mount/ (also available in the project GitHub page)
+```
+conda install --file /path/to/MuXTalk_Streamlit_Docker_mount/requirements.txt
+```
+- You have now created a new conda environment and installed in it all the packages the MuXTalk Streamlit app needs to run. The only remaining step is to run it. First, navigate to /path/to/MuXTalk_Streamlit_Docker_mount/
+```
+cd /path/to/MuXTalk_Streamlit_Docker_mount/
+ ```
+
+```
+
+```
+
+
+
 .parquet files that are output by the MuXTalk script can be used as input to the Streamlit app. 
 
 
