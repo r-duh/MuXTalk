@@ -16,7 +16,7 @@ A network-based statistical framework to predict and explore crosstalk between s
 
 ### There are two options to run MuXTalk end-to-end: 
 #### 1) Run MuXTalk as a Docker container (requires Docker installation)
-This is perhaps the most straightforward choice for the general user and only requires Docker to be installed. Please see https://docs.docker.com/get-docker/ for installation instructions. 
+This is perhaps the most straightforward choice for the general user and only requires Docker to be installed. Please see https://docs.docker.com/get-docker/ for installation instructions. Note: The Docker option is somewhat slower to run but has the advantage of not depending on the specific package environment and operating system of the user.
 
 - Once Docker is installed, the MuXTalk image "rduh/muxtalk:slim" can either be pulled from Docker Hub
 ```
@@ -34,8 +34,8 @@ docker load --input muxtalk_slim.tar
 docker run -it -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm rduh/muxtalk:slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
 ```
 
-#### 2) Run the MuXTalk script directly (requires conda to be installed )
-As the first step, install conda on oyur system (https://conda.io/projects/conda/en/latest/user-guide/install/index.html). Next, type the following commands in your command prompt, or terminal, in the following order to set up and run MuXTalk.
+#### 2) Run the MuXTalk script directly (requires conda to be installed). This is the faster option but requires familiarity with creating environments and running scripts. 
+As the first step, install conda on your system (https://conda.io/projects/conda/en/latest/user-guide/install/index.html). Next, type the following commands in your command prompt, or terminal, in the following order to set up and run MuXTalk.
 - Create a new environment named "muxtalk" (or any name of your choosing) for MuXTalk using conda: 
 ```
 conda create -n muxtalk python=3.8
@@ -145,7 +145,7 @@ docker load --input muxtalk_streamlit_slim.tar
 docker run -it -v /path/to/MuXTalk_Streamlit_Docker_mount/:/MuXTalk_Streamlit_app/ -p 8501:8501 rduh/muxtalk-streamlit:slim
 ```
 
-#### 2) Run the MuXTalk Streamlit app script directly (requires conda to be installed). This is the much faster option but requires familiarity with creating environments and running scripts.
+#### 2) Run the MuXTalk Streamlit app script directly (requires conda to be installed). This is the faster option but requires familiarity with creating environments and running scripts.
 If not already done so, install [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) on your system. Next, type the following commands in your command prompt, or terminal, in the following order to set up and run MuXTalk.
 - Create a new environment named "muxtalk_streamlit" (or any name of your choosing) for MuXTalk using conda: 
 ```
