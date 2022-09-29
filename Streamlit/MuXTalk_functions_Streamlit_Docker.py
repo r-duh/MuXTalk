@@ -205,7 +205,7 @@ def sparse_layers(KEGG_PPI_allnodes_entrez, GRN_KEGG_PPI_edges, PPI_all_edges_en
     return (A_GRN_sparr, A_PPI_sparr, A_KEGGPPI_sparr, A_KEGG_e_sparr_dict)
 
 
-@st.cache(show_spinner=False, allow_output_mutation=True)
+@st.cache(show_spinner=False, allow_output_mutation=True, hash_funcs={'_json.Scanner': hash})
 def return_between_multilink_edges(p1, p2, multilink_type, KEGG_PPI_allnodes_entrez_df, KEGG_path_nodes_entrez_dict, A_GRN_sparr, 
                                   A_KEGGPPI_sparr, KEGG_interaction_types_dict, A_KEGG_e_sparr_dict):
 
@@ -252,7 +252,7 @@ def return_between_multilink_edges(p1, p2, multilink_type, KEGG_PPI_allnodes_ent
     return between_multilink_edges_df
 
 
-@st.cache(show_spinner=False, allow_output_mutation=True)
+@st.cache(show_spinner=False, allow_output_mutation=True, hash_funcs={'_json.Scanner': hash})
 def return_shortest_multilink_edges_forStreamlit(proj_path, sp_threshold, p1, p2, multilink_type, KEGG_PPI_allnodes_entrez_df, 
 												KEGG_path_nodes_entrez_dict, A_GRN_sparr, 
                                   				A_KEGGPPI_sparr, KEGG_interaction_types_dict, A_KEGG_e_sparr_dict):

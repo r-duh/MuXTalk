@@ -22,7 +22,7 @@ custom_GRN_parquet = st.sidebar.file_uploader('Custom GRN parquet file')
 
 with st.container():
 	'''
-	# **MuXTalk:** Detecting and dissecting signaling crosstalk via multilayer networks	
+	# MuXTalk: Detecting and dissecting signaling crosstalk via multilayer networks	
 	***
 	'''
 
@@ -49,7 +49,8 @@ with expander_readme:
 	
 	**MuXTalk: Detecting and dissecting signaling crosstalk via multilayer networks.** A network-based statistical 
 	framework to explore crosstalk between signaling pathways.\n
-	**Reference:** \n	
+	**Reference:** Detecting and dissecting signaling crosstalk via the multilayer network integration of 
+	signaling and regulatory interactions, Halu et al., 2022 \n	
 	This is the visualization component of the [MuXTalk framework](https://github.com/r-duh/MuXTalk), 
 	where users can explore the crosstalk between 60 pairs of KEGG pathways. There are two options to use 
 	this MuXTalk visualization app: \n
@@ -139,9 +140,9 @@ if (custom_GRN_edges is None) & (custom_GRN_parquet is None):
 																					 KEGG_all_edges_entrez, KEGG_PPI_all_edges_entrez, 
 																					 KEGG_interaction_types_dict)
 
-	G_PPI =  nx.from_scipy_sparse_array(A_PPI_sparr.astype(bool).astype(int))
+	G_PPI =  nx.from_scipy_sparse_matrix(A_PPI_sparr.astype(bool).astype(int))
 	G_PPI_entrez = nx.relabel_nodes(G_PPI, KEGG_PPI_allnodes_entrez_df[[0, 'ix']].to_dict()[0])
-	G_KEGGPPI = nx.from_scipy_sparse_array(A_KEGGPPI_sparr.astype(bool).astype(int))
+	G_KEGGPPI = nx.from_scipy_sparse_matrix(A_KEGGPPI_sparr.astype(bool).astype(int))
 	G_KEGGPPI_entrez = nx.relabel_nodes(G_KEGGPPI, KEGG_PPI_allnodes_entrez_df[[0, 'ix']].to_dict()[0])
 
 	st.session_state['G_PPI_entrez'] = G_PPI_entrez
@@ -181,9 +182,9 @@ elif (custom_GRN_edges is not None) & (custom_GRN_parquet is not None):
 																					 KEGG_all_edges_entrez, KEGG_PPI_all_edges_entrez, 
 																					 KEGG_interaction_types_dict)
 
-	G_PPI =  nx.from_scipy_sparse_array(A_PPI_sparr.astype(bool).astype(int))
+	G_PPI =  nx.from_scipy_sparse_matrix(A_PPI_sparr.astype(bool).astype(int))
 	G_PPI_entrez = nx.relabel_nodes(G_PPI, KEGG_PPI_allnodes_entrez_df[[0, 'ix']].to_dict()[0])
-	G_KEGGPPI = nx.from_scipy_sparse_array(A_KEGGPPI_sparr.astype(bool).astype(int))
+	G_KEGGPPI = nx.from_scipy_sparse_matrix(A_KEGGPPI_sparr.astype(bool).astype(int))
 	G_KEGGPPI_entrez = nx.relabel_nodes(G_KEGGPPI, KEGG_PPI_allnodes_entrez_df[[0, 'ix']].to_dict()[0])
 
 	st.session_state['G_PPI_entrez'] = G_PPI_entrez
@@ -500,7 +501,7 @@ source_html =  f_html.read()
 components.html(source_html, height=900, width=900)
 	
 	
-tips_expander = st.expander(label='Tips for adjusting network visulaziation parameters')
+tips_expander = st.expander(label='Tips for adjusting network visualization parameters')
 with tips_expander:
 	tips_msg = st.container()	
 	tips_msg.write('''
