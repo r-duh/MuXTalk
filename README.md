@@ -146,6 +146,9 @@ docker load --input muxtalk_streamlit_slim.tar
 docker run -it -v /path/to/MuXTalk_Streamlit_Docker_mount/:/MuXTalk_Streamlit_app/ -p 8501:8501 rduh/muxtalk-streamlit:slim
 ```
 
+- Finally, to see the Streamlit app, go to your browser and enter the address that appears in your terminal (It looks like this: "You can now view your Streamlit app in your browser. URL: http://0.0.0.0:8501"). So, typically http://0.0.0.0:8501. If you have more than one Streamlit instance running, this can be http://0.0.0.0:8502, http://0.0.0.0:8503 and so on.
+
+
 #### 2) Run the MuXTalk Streamlit app script directly (requires conda to be installed). 
 This is the faster option but requires familiarity with creating environments and running scripts.
 - If not already done so, install [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) on your system. Next, type the following commands in your command prompt, or terminal, in the following order to set up and run MuXTalk.
@@ -169,6 +172,9 @@ Then, run the streamlit run by typing
 ```
 streamlit run MuXTalk_viz_Streamlit_Docker.py
 ```
+
+- Finally, to see the Streamlit app, go to your browser and enter the address that appears in your terminal (It looks like this: "You can now view your Streamlit app in your browser. URL: http://0.0.0.0:8501"). So, typically http://0.0.0.0:8501. If you have more than one Streamlit instance running, this can be http://0.0.0.0:8502, http://0.0.0.0:8503 and so on.
+
 
 ### Visualizing custom GRNs using the MuXTalk Streamlit app
 The .parquet files that are output by the MuXTalk script (details described above) can be used as input to the Streamlit app by a simple drag-and-drop on the app.
