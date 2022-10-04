@@ -9,7 +9,7 @@
 
 A network-based statistical framework to predict and explore crosstalk between signaling pathways.
 
-**Preprint URL:** 
+**Preprint URL:** https://www.biorxiv.org/content/10.1101/2022.09.29.510183v1
 
 
 ## Running MuXTalk locally (recommended for user-defined GRNs)
