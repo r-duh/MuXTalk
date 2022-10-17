@@ -3,6 +3,12 @@ import streamlit.components.v1 as components
 from MuXTalk_functions_Streamlit_Docker import *
 import networkx as nx
 from pyvis.network import Network
+import argparse
+
+
+parser=argparse.ArgumentParser()
+parser.add_argument('--proj_path', nargs='?', default='/MuXTalk_Streamlit_app/', help="Path to directory where '/MuXTalk_Docker_mount/' is located in the local drive.")
+args = parser.parse_args()
 
 st.set_page_config(layout='wide')
 
@@ -26,7 +32,6 @@ with st.container():
 	***
 	'''
 
-proj_path = '/MuXTalk_Streamlit_app/'
 input_filenames_dict = {'HUGO_symb_entrez_uniprot': 'HugoGene_20200528.txt', 'PPI_Cheng_2019_data': 'PPI_Cheng_NatComms2019.csv',
 					   'KEGG_all_nodes_df': 'KEGG_expanded_all_nodes.csv', 'KEGG_all_edges_df': 'KEGG_expanded_all_edges.csv',
 						'df_motinf' : 'cisbpall_motinf.txt', 'XTalk_DB': 'XTalkDB_crosstalk.csv', 
@@ -130,7 +135,7 @@ if (custom_GRN_edges is None) & (custom_GRN_parquet is None):
 
 	(KEGG_PPI_allnodes_entrez, GRN_KEGG_PPI_edges, PPI_all_edges_entrez, KEGG_PPI_all_edges_entrez, KEGG_PPI_allnodes_entrez_df, 
 	 KEGG_interaction_types_dict, KEGG_all_edges_entrez, KEGG_all_paths, KEGG_path_nodes_entrez_dict, 
-	 all_motif_types, all_motif_types_list) = process_data(proj_path, input_GRN, input_filenames_dict)
+	 all_motif_types, all_motif_types_list) = process_data(args.proj_path, input_GRN, input_filenames_dict)
 
 	KEGG_all_paths_sansIL17 = set(KEGG_all_paths) - set(['IL-17 signaling pathway'])
 	st.session_state['KEGG_all_paths_sansIL17'] = KEGG_all_paths_sansIL17
@@ -156,11 +161,11 @@ if (custom_GRN_edges is None) & (custom_GRN_parquet is None):
 
 	if MuXTalk_method == 'MuXTalk_between':
 
-		st.session_state['detected_ranked_pathway_pairs_df'] = pd.read_parquet(proj_path + input_GRN + '_between_detected_discovery.parquet')
+		st.session_state['detected_ranked_pathway_pairs_df'] = pd.read_parquet(args.proj_path + input_GRN + '_between_detected_discovery.parquet')
 				
 	elif MuXTalk_method == 'MuXTalk_shortest':
 
-		st.session_state['detected_ranked_pathway_pairs_df'] = pd.read_parquet(proj_path + input_GRN + '_shortest_sp%s_detected_discovery.parquet' % sp_threshold)
+		st.session_state['detected_ranked_pathway_pairs_df'] = pd.read_parquet(args.proj_path + input_GRN + '_shortest_sp%s_detected_discovery.parquet' % sp_threshold)
 
 elif (custom_GRN_edges is not None) & (custom_GRN_parquet is not None):
 
@@ -172,7 +177,7 @@ elif (custom_GRN_edges is not None) & (custom_GRN_parquet is not None):
 
 	(KEGG_PPI_allnodes_entrez, GRN_KEGG_PPI_edges, PPI_all_edges_entrez, KEGG_PPI_all_edges_entrez, KEGG_PPI_allnodes_entrez_df, 
 	 KEGG_interaction_types_dict, KEGG_all_edges_entrez, KEGG_all_paths, KEGG_path_nodes_entrez_dict, 
-	 all_motif_types, all_motif_types_list) = process_data_forStreamlit_customGRN(proj_path, custom_GRN_edges, input_filenames_dict)
+	 all_motif_types, all_motif_types_list) = process_data_forStreamlit_customGRN(args.proj_path, custom_GRN_edges, input_filenames_dict)
 
 	KEGG_all_paths_sansIL17 = set(KEGG_all_paths) - set(['IL-17 signaling pathway'])
 	st.session_state['KEGG_all_paths_sansIL17'] = KEGG_all_paths_sansIL17
@@ -228,7 +233,7 @@ multilink_type = form_cols_selectmultilink[0].selectbox('Select multilink type',
 	
 if MuXTalk_method == 'MuXTalk_shortest':	
 
-	multilink_edges_entrez_df = return_shortest_multilink_edges_forStreamlit(proj_path, sp_threshold, p1, p2, multilink_type, 
+	multilink_edges_entrez_df = return_shortest_multilink_edges_forStreamlit(args.proj_path, sp_threshold, p1, p2, multilink_type, 
 																		st.session_state['KEGG_PPI_allnodes_entrez_df'], 
 																		st.session_state['KEGG_path_nodes_entrez_dict'], 
 																		st.session_state['A_GRN_sparr'], 
