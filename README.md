@@ -36,17 +36,13 @@ docker run -it -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm rduh/muxtalk
 
 #### 2) Run the MuXTalk script directly (requires conda to be installed). 
 This is the faster option but requires familiarity with creating environments and running scripts. As the first step, [install conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) on your system . Next, type the following commands in your command prompt, or terminal, in the following order to set up and run MuXTalk.
-- Create a new environment named "muxtalk" (or any name of your choosing) for MuXTalk using conda: 
+- Using Conda, create a new environment named "muxtalk" (or any name of your choosing) for MuXTalk and install in it the dependencies needed by MuXTalk using the MuXTalk_requirements.yml file in /path/to/MuXTalk_Docker_mount/ (also available in the project GitHub [page]()): 
 ```
-conda create -n muxtalk python=3.8
+conda env create -n muxtalk -f /path/to/MuXTalk_Docker_mount/MuXTalk_environment.yml
 ```
 - Activate the newly created Conda environment:
 ```
 conda activate muxtalk
-```
-- Install the dependencies needed by MuXTalk using the requirements.txt file in /path/to/MuXTalk_Docker_mount/ (also available in the project GitHub [page](https://github.com/r-duh/MuXTalk/blob/main/requirements.txt))
-```
-conda install --file /path/to/MuXTalk_Docker_mount/requirements.txt
 ```
 - You have now created a new conda environment and installed in it all the packages MuXTalk needs to run. The only remaining step is to run MuXTalk. First, navigate to /path/to/MuXTalk_Docker_mount/
 ```
@@ -54,7 +50,7 @@ cd /path/to/MuXTalk_Docker_mount/
  ```
 You can then inspect the options for the MuXTalk script by 
 ```
-python3 run_MuXTalk.py --help
+python run_MuXTalk.py --help
 ```
 which will return
 ```
@@ -93,7 +89,7 @@ The only required argument is --proj_path, which should be set to /path/to/MuXTa
 
 For example, if we wanted to run MuXTalk_shortest on "HumanGRN106" as the input gene regulatory network (GRN) with a shortest path threshold of 1, we would run MuXTalk using
 ```
-python3 run_MuXTalk.py --proj_path=/path/to/MuXTalk_Docker_mount/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --sp_threshold=1
+python run_MuXTalk.py --proj_path=/path/to/MuXTalk_Docker_mount/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --sp_threshold=1
 ```
 
 ## Running MuXTalk with custom GRNs
