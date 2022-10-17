@@ -135,7 +135,7 @@ or loaded from the [.tar file](https://www.dropbox.com/s/4zyvp8ompdijw3c/muxtalk
 docker load --input muxtalk_streamlit_slim.tar
 ```
 
-- [Download](https://www.dropbox.com/sh/671hr100hqpymro/AADNet8iHQCdckMyMSnPMlzma?dl=0) the MuXTalk folder to be mounted as a volume to the Docker container. This local folder (i.e., located in the user's machine), named /MuXTalk_Streamlit_Docker_mount/, will act as the main folder in which MuXTalk Streamlit app's container will read and write files.
+- [Download](https://www.dropbox.com/s/r1yd6rcl9pyeyrc/muxtalk_streamlit_slim.tar?dl=0) the MuXTalk folder to be mounted as a volume to the Docker container. This local folder (i.e., located in the user's machine), named /MuXTalk_Streamlit_Docker_mount/, will act as the main folder in which MuXTalk Streamlit app's container will read and write files.
 
 - To run the MuXTalk Streamlit app as a Docker container, type in the below command in the terminal. /path/to/MuXTalk_Streamlit_Docker_mount/ is where the folder you downloaded above is located in your computer. Details about the MuXTalk visualization parameters can be found in the readme within the app.
 ```
