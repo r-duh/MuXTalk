@@ -36,7 +36,7 @@ docker run -it -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm rduh/muxtalk
 
 #### 2) Run the MuXTalk script directly (requires conda to be installed). 
 This is the faster option but requires familiarity with creating environments and running scripts. As the first step, [install conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) on your system . Next, type the following commands in your command prompt, or terminal, in the following order to set up and run MuXTalk.
-- Using Conda, create a new environment named "muxtalk" (or any name of your choosing) for MuXTalk and install in it the dependencies needed by MuXTalk using the MuXTalk_requirements.yml file in /path/to/MuXTalk_Docker_mount/ (also available in the project GitHub [page]()): 
+- Using Conda, create a new environment named "muxtalk" (or any name of your choosing) for MuXTalk and install in it the dependencies needed by MuXTalk using the MuXTalk_requirements.yml file in /path/to/MuXTalk_Docker_mount/ (also available in the project GitHub [page](https://github.com/r-duh/MuXTalk/blob/main/MuXTalk_environment.yml)): 
 ```
 conda env create -n muxtalk -f /path/to/MuXTalk_Docker_mount/MuXTalk_environment.yml
 ```
