@@ -148,25 +148,21 @@ docker run -it -v /path/to/MuXTalk_Streamlit_Docker_mount/:/MuXTalk_Streamlit_ap
 #### 2) Run the MuXTalk Streamlit app script directly (requires conda to be installed). 
 This is the faster option but requires familiarity with creating environments and running scripts.
 - If not already done so, install [conda](https://conda.io/projects/conda/en/latest/user-guide/install/index.html) on your system. Next, type the following commands in your command prompt, or terminal, in the following order to set up and run MuXTalk.
-- Create a new environment named "muxtalk_streamlit" (or any name of your choosing) for MuXTalk using conda: 
+- Using Conda, create a new environment named "muxtalk_streamlit" (or any name of your choosing) for the MuXTalk Streamlit app and install in it the dependencies needed by the app using the MuXTalk_Streamlit_requirements.yml file in /path/to/MuXTalk_Streamlit_Docker_mount/ (also available in the project GitHub [page](https://github.com/r-duh/MuXTalk/blob/main/Streamlit/MuXTalk_Streamlit_environment.yml)): 
 ```
-conda create -n muxtalk_streamlit python=3.8
+conda env create -n muxtalk_streamlit -f /path/to/MuXTalk_Streamlit_Docker_mount/MuXTalk_Streamlit_environment.yml
 ```
 - Activate the newly created Conda environment:
 ```
 conda activate muxtalk_streamlit
 ```
-- Install the dependencies needed by MuXTalk using the requirements.txt file in /path/to/MuXTalk_Docker_mount/ (also available in the project GitHub [page](https://github.com/r-duh/MuXTalk/blob/main/Streamlit/requirements.txt)).
-```
-conda install --file /path/to/MuXTalk_Streamlit_Docker_mount/requirements.txt
-```
 - You have now created a new conda environment and installed in it all the packages the MuXTalk Streamlit app needs to run. The only remaining step is to run it. First, navigate to /path/to/MuXTalk_Streamlit_Docker_mount/
 ```
 cd /path/to/MuXTalk_Streamlit_Docker_mount/
 ```
-Then, run the streamlit run by typing
+Then, run the streamlit run by typing the below command (note that it has the additional --proj_path flag, which needs to be set to the MuXTalk Streamlit app directory
 ```
-streamlit run MuXTalk_viz_Streamlit_Docker.py
+streamlit run MuXTalk_viz_Streamlit_Docker.py -- --proj_path=/path/to/MuXTalk_Streamlit_Docker_mount/
 ```
 
 - Finally, to see the Streamlit app, go to your browser and enter the address that appears in your terminal (It looks like this: "You can now view your Streamlit app in your browser. URL: `http://0.0.0.0:8501` "). So, typically `http://0.0.0.0:8501`. If you have more than one Streamlit instance running, this can be `http://0.0.0.0:8502`, `http://0.0.0.0:8503`, and so on.
