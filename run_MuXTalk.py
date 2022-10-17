@@ -9,9 +9,9 @@ if __name__ == "__main__":
 	parser.add_argument("--input_GRN", help="Name of the input gene regulatory network (GRN). Please note that this must be the same as the name preceding '_edges.csv' in the GRN edgelist.")
 	parser.add_argument("--MuXTalk_method", help="MuXTalk method to be used: The two valid options are 'MuXTalk_between' and 'MuXTalk_shortest'.")
 	parser.add_argument("--get_n", type=int, nargs='?', default=100, help="Number of randomized instances to be retrieved from the ensemble. For memory efficiency, the default value is set to 100.")
-	parser.add_argument("--get_randomly", help="Option to retrieve randomized networks in order or randomly. Default value is True.")
+	parser.add_argument("--get_randomly", nargs='?', default=True, help="Option to retrieve randomized networks in order or randomly. Default value is True.")
 	parser.add_argument("--sp_threshold", help="The shortest path threshold to be used in MuXTalk. The valid options are 'None', '1', or '2'.")
-	parser.add_argument("--parquet", help="Option to output the MuXTalk results as a .parquet file. False (default) outputs .csv files.")
+	parser.add_argument("--parquet", nargs='?', default=False, help="Option to output the MuXTalk results as a .parquet file. False (default) outputs .csv files.")
 
 	args=parser.parse_args()
 
@@ -26,6 +26,6 @@ if __name__ == "__main__":
             input_GRN=args.input_GRN, 
             MuXTalk_method=args.MuXTalk_method, 
             get_n=args.get_n, 
-			get_randomly=args.get_randomly, 
+            get_randomly=args.get_randomly, 
             sp_threshold=args.sp_threshold, 
             parquet=args.parquet)
