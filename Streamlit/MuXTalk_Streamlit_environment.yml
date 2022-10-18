@@ -1,4 +1,4 @@
-name: MuXTalk_Streamlit_2
+name: MuXTalk_Streamlit
 channels:
   - bioconda
   - defaults
