@@ -183,5 +183,4 @@ dependencies:
   - zipp=3.8.0=py39hecd8cb5_0
   - zlib=1.2.12=h4dc903c_3
   - zstd=1.5.2=hcb37349_0
-prefix: /Users/ardahalu/anaconda3/envs/MuXTalk_Streamlit_2
 
