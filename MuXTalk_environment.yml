@@ -53,5 +53,4 @@ dependencies:
   - xz=5.2.5=hca72f7f_1
   - zipp=3.8.0=py38hecd8cb5_0
   - zlib=1.2.12=h4dc903c_3
-prefix: /Users/ardahalu/anaconda3/envs/MuXTalk
 
