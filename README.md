@@ -199,6 +199,7 @@ https://www.dropbox.com/s/z14qywvqsa3mkqw/HumanGRN10e6_A_GRN_sparr_rand_dict_500
 
 ## Manuscript analyses
 The analyses presented in our paper can be viewed via the link below:
+
 https://nbviewer.org/github/r-duh/MuXTalk/blob/main/manuscript_analysis/MuXTalk_manuscript_analyses.ipynb
 
 # Contact:
