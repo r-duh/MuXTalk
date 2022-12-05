@@ -181,10 +181,14 @@ In the event that the Docker container quits with or without errors, the followi
 docker run -it --memory 12g --memory-swap -1 -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm rduh/muxtalk:slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
 ```
 
-<br>
-<br>
-<br>
+## Manuscript analyses
+The analyses presented in our paper can be viewed via the link below:
 
+https://nbviewer.org/github/r-duh/MuXTalk/blob/main/manuscript_analysis/MuXTalk_manuscript_analyses.ipynb
+
+<br>
+<br>
+<br>
 
 <!-- Additional considerations:
 
@@ -196,11 +200,6 @@ https://www.dropbox.com/s/pknam5ok2rhccre/A_KEGGPPI_sparr_rand_dict_500runs.pick
 https://www.dropbox.com/s/p1xq59s44rgzxof/HumanGRN10e4_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-4]
 https://www.dropbox.com/s/hd49mgdle9uhc33/HumanGRN10e5_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-5]
 https://www.dropbox.com/s/z14qywvqsa3mkqw/HumanGRN10e6_A_GRN_sparr_rand_dict_500runs.pickle?dl=0 [GRN, p<10e-6] -->
-
-## Manuscript analyses
-The analyses presented in our paper can be viewed via the link below:
-
-https://nbviewer.org/github/r-duh/MuXTalk/blob/main/manuscript_analysis/MuXTalk_manuscript_analyses.ipynb
 
 # Contact:
 Created and maintained by Arda Halu. For requests for assistance, email arda.halu@channing.harvard.edu.
