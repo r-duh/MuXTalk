@@ -89,7 +89,7 @@ The only required argument is --proj_path, which should be set to /path/to/MuXTa
 
 For example, if we wanted to run MuXTalk_shortest on "HumanGRN106" as the input gene regulatory network (GRN) with a shortest path threshold of 1, we would run MuXTalk using
 ```
-python run_MuXTalk.py --proj_path=/path/to/MuXTalk_Docker_mount/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --sp_threshold=1
+python run_MuXTalk_v2.py --proj_path=/path/to/MuXTalk_Docker_mount/ --input_GRN=HumanGRN10e6 --input_PPI=PPI_Cheng_NatComms2019 --input_PPI_ID_format=Entrez --MuXTalk_method=MuXTalk_shortest --sp_threshold=1
 ```
 
 ## Running MuXTalk with custom GRNs
