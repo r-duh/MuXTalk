@@ -107,6 +107,8 @@ For example, if we wanted to run MuXTalk_shortest on "HumanGRN106" as the input 
 python run_MuXTalk_v2.py --proj_path=/path/to/MuXTalk_Docker_mount/ --input_GRN=HumanGRN10e6 --input_PPI=PPI_Cheng_NatComms2019 --input_PPI_ID_format=Entrez --MuXTalk_method=MuXTalk_shortest --sp_threshold=1
 ```
 
+Running the above script will result in the main output of MuXTalk, i.e., the two files named "input_GRN_input_PPI_sp_threshold_MuXTalk_method_detected_discovery.csv" and "input_GRN_input_PPI_sp_threshold_MuXTalk_method_detected_discovery.csv", where input_GRN, input_PPI, sp_threshold and MuXTalk_method are the user-defined parameters. These files contain the MuXTalk-ranked lists of pathway pairs for the "detected" (meaning pathway pairs that were assessed by MuXTalk, excluding the pathway pairs that had no shortest paths between them in the PPI network) and complete set, respectively.
+
 ## Running MuXTalk with custom GRNs
 - Once MuXTalk is set up, we can also run it with user-defined GRNs. For this, we need to first add into our local MuXTalk folder (/path/to/MuXTalk_Docker_mount/) an edgelist file for the custom GRN named "customGRN_edges.csv". This file must have two columns, without headers, the first one for the source gene (or transcription factor) and the second one for the target gene, as shown below. "custom_GRN" will also be the name of the input_GRN variable. Genes must have Gene Symbols as identifiers; MuXTalk will take care of all the ID conversions.
 
