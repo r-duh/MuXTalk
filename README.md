@@ -50,14 +50,17 @@ cd /path/to/MuXTalk_Docker_mount/
  ```
 You can then inspect the options for the MuXTalk script by 
 ```
-python run_MuXTalk.py --help
+python run_MuXTalk_v2.py --help
 ```
 which will return
 ```
-usage: run_MuXTalk.py [-h] [--proj_path PROJ_PATH] [--input_GRN INPUT_GRN]
-                      [--MuXTalk_method MUXTALK_METHOD] [--get_n GET_N]
-                      [--get_randomly GET_RANDOMLY]
-                      [--sp_threshold SP_THRESHOLD] [--parquet PARQUET]
+usage: run_MuXTalk_v2.py [-h] [--proj_path PROJ_PATH] [--input_GRN INPUT_GRN]
+                         [--input_GRN_ID_format INPUT_GRN_ID_FORMAT]
+                         [--input_PPI INPUT_PPI]
+                         [--input_PPI_ID_format INPUT_PPI_ID_FORMAT]
+                         [--MuXTalk_method MUXTALK_METHOD] [--get_n [GET_N]]
+                         [--get_randomly [GET_RANDOMLY]]
+                         [--sp_threshold [SP_THRESHOLD]] [--parquet [PARQUET]]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -68,19 +71,31 @@ optional arguments:
                         Name of the input gene regulatory network (GRN).
                         Please note that this must be the same as the name
                         preceding '_edges.csv' in the GRN edgelist.
+  --input_GRN_ID_format INPUT_GRN_ID_FORMAT
+                        ID format for the input GRN. Specify 'Gene_Symbol' or
+                        'Entrez' depending on the input data. Default is
+                        'Gene_Symbol'.
+  --input_PPI INPUT_PPI
+                        Name of the input protein-protein interaction (PPI)
+                        network. Please note that this must be the same as the
+                        name preceding '_edges.csv' in the PPI edgelist.
+  --input_PPI_ID_format INPUT_PPI_ID_FORMAT
+                        ID format for the input PPI. Specify 'Gene_Symbol' or
+                        'Entrez' depending on the input data. Default is
+                        'Gene_Symbol'.
   --MuXTalk_method MUXTALK_METHOD
                         MuXTalk method to be used: The two valid options are
                         'MuXTalk_between' and 'MuXTalk_shortest'.
-  --get_n GET_N         Number of randomized instances to be retrieved from
-                        the ensemble. For memory efficiency, get_n=100 is
-                        recommended.
-  --get_randomly GET_RANDOMLY
+  --get_n [GET_N]       Number of randomized instances to be retrieved from
+                        the ensemble. For memory efficiency, the default value
+                        is set to 100.
+  --get_randomly [GET_RANDOMLY]
                         Option to retrieve randomized networks in order or
                         randomly. Default value is True.
-  --sp_threshold SP_THRESHOLD
+  --sp_threshold [SP_THRESHOLD]
                         The shortest path threshold to be used in MuXTalk. The
-                        valid options are 'None', '1', or '2'.
-  --parquet PARQUET     Option to output the MuXTalk results as a .parquet
+                        valid options are 'None', '1', or '2'. Default is '1'.
+  --parquet [PARQUET]   Option to output the MuXTalk results as a .parquet
                         file. False (default) outputs .csv files.
 ```
 
