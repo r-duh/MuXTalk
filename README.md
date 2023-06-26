@@ -184,7 +184,7 @@ docker run -it --memory 12g --memory-swap -1 -v /path/to/MuXTalk_Docker_mount/:/
 ## Manuscript analyses
 The analyses presented in our paper can be viewed via the link below:
 
-https://nbviewer.org/github/r-duh/MuXTalk/blob/main/manuscript_analysis/MuXTalk_manuscript_analyses.ipynb
+https://nbviewer.org/github/r-duh/MuXTalk/blob/main/manuscript_analysis/R2_MuXTalk_manuscript_analyses.ipynb
 
 <br>
 <br>
