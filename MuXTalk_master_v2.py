@@ -1715,7 +1715,7 @@ def shortest_paths_multilink_counts_discovery(discovery_crosstalk_paths, shortes
                                     A_GRN_sparr, A_KEGGPPI_sparr, all_motif_types, all_motif_types_list, KEGG_interaction_types_dict, 
                                     A_KEGG_e_sparr_dict, proj_path, input_GRN, input_PPI):
     
-    if not os.path.exists(proj_path + '%s_%s_sp%_shortest_paths_multilink_counts_discovery.pickle' % (input_GRN, input_PPI, sp_threshold)):  
+    if not os.path.exists(proj_path + '%s_%s_sp%s_shortest_paths_multilink_counts_discovery.pickle' % (input_GRN, input_PPI, sp_threshold)):  
         
         print('Calculating multilink counts of shortest path edges with threshold (%s) between all pairs of KEGG signaling pathways...' 
               % str(sp_threshold))   
@@ -1767,14 +1767,14 @@ def shortest_paths_multilink_counts_discovery(discovery_crosstalk_paths, shortes
 
             shortest_paths_multilink_counts_df_dict[(p1, p2)] = multilink_counts_df  
 
-        with open(proj_path + '%s_%s_sp%_shortest_paths_multilink_counts_discovery.pickle' % (input_GRN, input_PPI, sp_threshold), 'wb') as fp:
+        with open(proj_path + '%s_%s_sp%s_shortest_paths_multilink_counts_discovery.pickle' % (input_GRN, input_PPI, sp_threshold), 'wb') as fp:
             pickle.dump(shortest_paths_multilink_counts_df_dict, fp, protocol=pickle.HIGHEST_PROTOCOL)
             
     else:
         
         print('Reading multilink counts of shortest path edges with threshold (%s) between all pairs of KEGG signaling pathways...' 
               % str(sp_threshold))
-        with open(proj_path + '%s_%s_sp%_shortest_paths_multilink_counts_discovery.pickle' % (input_GRN, input_PPI, sp_threshold), 'rb') as fp:
+        with open(proj_path + '%s_%s_sp%s_shortest_paths_multilink_counts_discovery.pickle' % (input_GRN, input_PPI, sp_threshold), 'rb') as fp:
             shortest_paths_multilink_counts_df_dict = pickle.load(fp)       
             
     return shortest_paths_multilink_counts_df_dict
@@ -2874,8 +2874,8 @@ def KEGG_netstats(KEGG_path_nodes_entrez_dict, KEGG_all_edges_entrez):
 
     return KEGG_netstats_df
 
-def run_MuXTalk(proj_path, input_filenames_dict, input_GRN, input_PPI, MuXTalk_method='MuXTalk_shortest', N_runs=500, N_swap=10, sp_threshold=1, 
-                parquet=False):
+def run_MuXTalk(proj_path, input_filenames_dict, input_GRN, input_GRN_ID_format, input_PPI, input_PPI_ID_format, MuXTalk_method='MuXTalk_shortest', 
+				N_runs=500, N_swap=10, sp_threshold=1, parquet=False):
     
     (KEGG_PPI_allnodes_entrez, GRN_KEGG_PPI_edges, PPI_all_edges_entrez, KEGG_PPI_all_edges_entrez, KEGG_PPI_allnodes_entrez_df, 
      KEGG_interaction_types_dict, KEGG_all_edges_entrez, KEGG_all_paths, KEGG_path_nodes_entrez_dict, 
@@ -2905,7 +2905,7 @@ def run_MuXTalk(proj_path, input_filenames_dict, input_GRN, input_PPI, MuXTalk_m
                                                                                           KEGG_path_nodes_entrez_dict, A_GRN_sparr, A_KEGGPPI_sparr, 
                                                                                           all_motif_types_list, all_motif_types, 
                                                                                           KEGG_interaction_types_dict, A_KEGG_e_sparr_dict, 
-                                                                                          proj_path, input_GRN)
+                                                                                          proj_path, input_GRN, input_PPI)
 
         between_paths_multilink_counts_rand_df_dict = between_paths_multilink_counts_rand_discovery(A_GRN_sparr_rand_dict, KEGG_all_paths_sansIL17,
                                                                                                     KEGG_PPI_allnodes_entrez_df, 
@@ -2913,39 +2913,39 @@ def run_MuXTalk(proj_path, input_filenames_dict, input_GRN, input_PPI, MuXTalk_m
                                                                                                     A_KEGGPPI_sparr_rand_dict, all_motif_types_list, 
                                                                                                     KEGG_interaction_types_dict, 
                                                                                                     A_KEGG_e_sparr_rand_dict, 
-                                                                                                    proj_path, input_GRN, N_rand = 100, N_swap = 10)
+                                                                                                    proj_path, input_GRN, input_PPI, N_rand = 100, N_swap = 10)
 
         (between_paths_multilink_counts_stats_df_dict, 
          between_paths_rand_zscores_df_dict) = between_paths_multilink_zscores_pvals_discovery(KEGG_all_paths_sansIL17, 
                                                                                                between_paths_multilink_counts_rand_df_dict, 
                                                                                                between_paths_multilink_counts_df_dict, 
-                                                                                               all_motif_types, proj_path, input_GRN, N_rand=100)
+                                                                                               all_motif_types, proj_path, input_GRN, input_PPI, N_rand=100)
 
         (between_detected_ranked_pathway_pairs_df, between_detected_ranked_pathway_pairs, 
          between_ranked_pathway_pairs_df, between_ranked_pathway_pairs, 
          between_len_sig) = get_ranked_pathway_pairs_discovery(XTalk_DB_positives_common_str, proj_path, method=MuXTalk_method, 
-                                                               multilink_params={'GRN': input_GRN, 'sp_threshold': sp_threshold}, parquet=parquet)  
+                                                               multilink_params={'GRN': input_GRN, 'PPI': input_PPI, 'sp_threshold': sp_threshold}, parquet=parquet)  
         
     
     elif MuXTalk_method == 'MuXTalk_shortest':
         
         shortest_path_edges_dict, shortest_path_intermediaries_dict = get_shortest_paths_discovery(A_KEGGPPI_sparr, KEGG_all_paths_sansIL17, 
                                                                                                    KEGG_PPI_allnodes_entrez_df, 
-                                                                                                   KEGG_path_nodes_entrez_dict, proj_path, 
+                                                                                                   KEGG_path_nodes_entrez_dict, proj_path, input_PPI,
                                                                                                    sp_threshold=sp_threshold)
 
         shortest_paths_multilink_counts_df_dict = shortest_paths_multilink_counts_discovery(KEGG_all_paths_sansIL17, shortest_path_edges_dict, 
                                                                                             sp_threshold, A_GRN_sparr, A_KEGGPPI_sparr, 
                                                                                             all_motif_types, all_motif_types_list, 
                                                                                             KEGG_interaction_types_dict, A_KEGG_e_sparr_dict, 
-                                                                                            proj_path, input_GRN)
+                                                                                            proj_path, input_GRN, input_PPI)
 
         shortest_paths_multilink_counts_rand_df_dict = shortest_paths_multilink_counts_rand_discovery(A_GRN_sparr_rand_dict, KEGG_all_paths_sansIL17, 
                                                                                                       shortest_path_edges_dict, sp_threshold, 
                                                                                                       all_motif_types, A_KEGGPPI_sparr_rand_dict, 
                                                                                                       all_motif_types_list, 
                                                                                                       KEGG_interaction_types_dict, 
-                                                                                                      A_KEGG_e_sparr_rand_dict, proj_path, input_GRN, 
+                                                                                                      A_KEGG_e_sparr_rand_dict, proj_path, input_GRN, input_PPI,
                                                                                                       N_rand = 100, N_swap = 10)
 
         (shortest_paths_multilink_counts_stats_df_dict, 
@@ -2953,15 +2953,15 @@ def run_MuXTalk(proj_path, input_filenames_dict, input_GRN, input_PPI, MuXTalk_m
                                                                                                  shortest_paths_multilink_counts_rand_df_dict, 
                                                                                                  sp_threshold, 
                                                                                                  shortest_paths_multilink_counts_df_dict, 
-                                                                                                 all_motif_types, proj_path, input_GRN, N_rand=100)
+                                                                                                 all_motif_types, proj_path, input_GRN, input_PPI, N_rand=100)
 
         (shortest_detected_ranked_pathway_pairs_df, shortest_detected_ranked_pathway_pairs, 
          shortest_ranked_pathway_pairs_df, shortest_ranked_pathway_pairs, 
          shortest_len_sig) = get_ranked_pathway_pairs_discovery(XTalk_DB_positives_common_str, proj_path, method=MuXTalk_method, 
-                                                                multilink_params={'GRN': input_GRN, 'sp_threshold': sp_threshold}, parquet=parquet)
+                                                                multilink_params={'GRN': input_GRN, 'PPI': input_PPI, 'sp_threshold': sp_threshold}, parquet=parquet)
         
 
-def read_A_KEGG_e_sparr_rand_from_npz(proj_path, npz_folder_name, get_n, get_randomly=True):
+def read_A_KEGG_e_sparr_rand_from_npz(proj_path, input_PPI, npz_folder_name, get_n, get_randomly=True):
 
     print('Reading ensemble of randomized edge type-specific KEGG sparse matrices from npz files...')
     
@@ -2974,53 +2974,54 @@ def read_A_KEGG_e_sparr_rand_from_npz(proj_path, npz_folder_name, get_n, get_ran
     
     
     if get_randomly:
-        rand_ix = random.sample(range(len([name for name in os.listdir(proj_path + npz_folder_name + 'Activation/') if 
-                                           name.startswith('A_KEGG_e_')])), get_n)
+        rand_ix = random.sample(range(len([name for name in os.listdir(proj_path + '%s_%s/Activation/' % (input_PPI, npz_folder_name)) if 
+                                           name.startswith('%s_A_KEGG_e_' % input_PPI)])), get_n)
         for i in tqdm(np.arange(get_n), position=0, leave=True):
             for e in np.concatenate([sorted(list(set(sparr_rand_npz_file_names_dict.keys()) - set(['ppi']))), ['ppi']]):      
-                A_KEGG_e_sparr_rand_dict[i][e] = sparse.load_npz(proj_path + npz_folder_name + '%s/A_KEGG_e_sparr_rand_%s_%s.npz' % 
-                                                                 (sparr_rand_npz_file_names_dict[e], rand_ix[i], sparr_rand_npz_file_names_dict[e]))
+                A_KEGG_e_sparr_rand_dict[i][e] = sparse.load_npz(proj_path + '%s_%s/%s/%s_A_KEGG_e_sparr_rand_%s_%s.npz' % 
+                                                                 (input_PPI, npz_folder_name, sparr_rand_npz_file_names_dict[e], input_PPI, rand_ix[i], sparr_rand_npz_file_names_dict[e]))
                 
     else:
         for i in tqdm(np.arange(get_n), position=0, leave=True):
             for e in np.concatenate([sorted(list(set(sparr_rand_npz_file_names_dict.keys()) - set(['ppi']))), ['ppi']]):      
-                A_KEGG_e_sparr_rand_dict[i][e] = sparse.load_npz(proj_path + npz_folder_name + '%s/A_KEGG_e_sparr_rand_%s_%s.npz' % 
-                                                                 (sparr_rand_npz_file_names_dict[e], i, sparr_rand_npz_file_names_dict[e]))   
+                A_KEGG_e_sparr_rand_dict[i][e] = sparse.load_npz(proj_path + '%s_%s/%s/%s_A_KEGG_e_sparr_rand_%s_%s.npz' % 
+                                                                 (input_PPI, npz_folder_name, sparr_rand_npz_file_names_dict[e], input_PPI, i, sparr_rand_npz_file_names_dict[e]))   
                 
     return A_KEGG_e_sparr_rand_dict
 
-def read_A_GRN_sparr_rand_from_npz(proj_path, input_GRN, npz_folder_name, get_n, get_randomly=True):
+def read_A_GRN_sparr_rand_from_npz(proj_path, input_GRN, input_PPI, npz_folder_name, get_n, get_randomly=True):
 
     print('Reading ensemble of randomized GRN sparse matrices from npz files...')
     
     A_GRN_sparr_rand_dict = {}
     
     if get_randomly:
-        rand_ix = random.sample(range(len([name for name in os.listdir(proj_path + input_GRN + '_' + npz_folder_name) if 
-                                           name.startswith('%s_A_GRN_' % input_GRN)])), get_n)    
+        rand_ix = random.sample(range(len([name for name in os.listdir(proj_path + '%s_%s_%s/' % (input_GRN, input_PPI, npz_folder_name)) if 
+                                           name.startswith('%s_%s_A_GRN_' % (input_GRN, input_PPI))])), get_n)    
         for i in tqdm(np.arange(get_n), position=0, leave=True):
-            A_GRN_sparr_rand_dict[i] = sparse.load_npz(proj_path + input_GRN + '_' + npz_folder_name + '%s_A_GRN_sparr_rand_%s.npz' % 
-                                                       (input_GRN, rand_ix[i]))
+            A_GRN_sparr_rand_dict[i] = sparse.load_npz(proj_path + '%s_%s_%s/%s_%s_A_GRN_sparr_rand_%s.npz' % 
+                                                       (input_GRN, input_PPI, npz_folder_name, input_GRN, input_PPI, rand_ix[i]))
     else:
         for i in tqdm(np.arange(get_n), position=0, leave=True):
-            A_GRN_sparr_rand_dict[i] = sparse.load_npz(proj_path + input_GRN + '_' + npz_folder_name + '%s_A_GRN_sparr_rand_%s.npz' % 
-                                                       (input_GRN, i))       
+            A_GRN_sparr_rand_dict[i] = sparse.load_npz(proj_path + '%s_%s_%s/%s_%s_A_GRN_sparr_rand_%s.npz' % 
+                                                       (input_GRN, input_PPI, npz_folder_name, input_GRN, input_PPI, i))       
             
     return A_GRN_sparr_rand_dict
 
-def read_A_KEGGPPI_sparr_rand_from_npz(proj_path, npz_folder_name, get_n, get_randomly=True):
+def read_A_KEGGPPI_sparr_rand_from_npz(proj_path, input_PPI, npz_folder_name, get_n, get_randomly=True):
     
     print('Reading ensemble of randomized KEGG+PPI combined sparse matrices from npz files...')
     
     A_KEGGPPI_sparr_rand_dict = {}
     
     if get_randomly:
-        rand_ix = random.sample(range(len([name for name in os.listdir(proj_path + npz_folder_name) if name.startswith('A_KEGGPPI_')])), get_n) 
+        rand_ix = random.sample(range(len([name for name in os.listdir(proj_path + '%s_%s/' % (input_PPI, npz_folder_name)) if 
+        									name.startswith('%s_A_KEGGPPI_' % input_PPI)])), get_n) 
         for i in tqdm(np.arange(get_n), position=0, leave=True):
-            A_KEGGPPI_sparr_rand_dict[i] = sparse.load_npz(proj_path + npz_folder_name + 'A_KEGGPPI_sparr_rand_%s.npz' % rand_ix[i])
+            A_KEGGPPI_sparr_rand_dict[i] = sparse.load_npz(proj_path + '%s_%s/%s_A_KEGGPPI_sparr_rand_%s.npz' % (input_PPI, npz_folder_name, input_PPI, rand_ix[i]))
     else:
         for i in tqdm(np.arange(get_n), position=0, leave=True):
-            A_KEGGPPI_sparr_rand_dict[i] = sparse.load_npz(proj_path + npz_folder_name + 'A_KEGGPPI_sparr_rand_%s.npz' % i)
+            A_KEGGPPI_sparr_rand_dict[i] = sparse.load_npz(proj_path + '%s_%s/%s_A_KEGGPPI_sparr_rand_%s.npz' % (input_PPI, npz_folder_name, input_PPI, i))
             
     return A_KEGGPPI_sparr_rand_dict
 
@@ -3031,40 +3032,40 @@ def read_A_KEGG_sparr_rand_from_npz(proj_path, npz_folder_name, get_n, get_rando
     A_KEGG_sparr_rand_dict = {}
     
     if get_randomly:
-        rand_ix = random.sample(range(len([name for name in os.listdir(proj_path + npz_folder_name) if name.startswith('A_KEGG_')])), get_n)    
+        rand_ix = random.sample(range(len([name for name in os.listdir(proj_path + '%s/' % npz_folder_name) if name.startswith('A_KEGG_')])), get_n)    
         for i in tqdm(np.arange(get_n), position=0, leave=True):
-            A_KEGG_sparr_rand_dict[i] = sparse.load_npz(proj_path + npz_folder_name + 'A_KEGG_sparr_rand_%s.npz' % rand_ix[i])
+            A_KEGG_sparr_rand_dict[i] = sparse.load_npz(proj_path + '%s/A_KEGG_sparr_rand_%s.npz' % (npz_folder_name, rand_ix[i]))
     else:
         for i in tqdm(np.arange(get_n), position=0, leave=True):
-            A_KEGG_sparr_rand_dict[i] = sparse.load_npz(proj_path + npz_folder_name + 'A_KEGG_sparr_rand_%s.npz' % i)
+            A_KEGG_sparr_rand_dict[i] = sparse.load_npz(proj_path + '%s/A_KEGG_sparr_rand_%s.npz' % (npz_folder_name, i))
             
     return A_KEGG_sparr_rand_dict
 
-def randomize_GRN_npz(A_GRN_sparr, proj_path, input_GRN, npz_folder_name, N_runs=500, N_swap=10, get_n=100, get_randomly=True, return_output=False):
+def randomize_GRN_npz(A_GRN_sparr, proj_path, input_GRN, input_PPI, npz_folder_name, N_runs=500, N_swap=10, get_n=100, get_randomly=True, return_output=False):
     
-    if not os.path.exists(proj_path + input_GRN + '_' + npz_folder_name):
+    if not os.path.exists(proj_path + '%s_%s_%s/' % (input_GRN, input_PPI, npz_folder_name)):
         
-        os.makedirs(proj_path + input_GRN + '_' + npz_folder_name)
+        os.makedirs(proj_path + '%s_%s_%s/' % (input_GRN, input_PPI, npz_folder_name))
         
         print('Computing ensemble of randomized GRN sparse  matrices...')
         A_GRN_sparr_rand_dict = {}
         for nrand in tqdm(np.arange(N_runs), position=0, leave=True):
             A_GRN_arr_rand, A_GRN_nrew_rand = edge_swap_undir_sign(A_GRN_sparr.toarray(), N_swap)
             A_GRN_sparr_rand_dict[nrand] = sparse.csr_matrix(A_GRN_arr_rand)
-            sparse.save_npz(proj_path + input_GRN + '_' + npz_folder_name + '%s_A_GRN_sparr_rand_%s.npz' % (input_GRN, nrand), 
+            sparse.save_npz(proj_path + '%s_%s_%s/%s_%s_A_GRN_sparr_rand_%s.npz' % (input_GRN, input_PPI, npz_folder_name, input_GRN, input_PPI, nrand), 
                             A_GRN_sparr_rand_dict[nrand])          
         
         if return_output==True:        
             return A_GRN_sparr_rand_dict
             
-    elif len(os.listdir(proj_path + input_GRN + '_' + npz_folder_name)) == 0:
+    elif len(os.listdir(proj_path + '%s_%s_%s/' % (input_GRN, input_PPI, npz_folder_name))) == 0:
         
         print('Computing ensemble of randomized GRN sparse  matrices...')
         A_GRN_sparr_rand_dict = {}
         for nrand in tqdm(np.arange(N_runs), position=0, leave=True):
             A_GRN_arr_rand, A_GRN_nrew_rand = edge_swap_undir_sign(A_GRN_sparr.toarray(), N_swap)
             A_GRN_sparr_rand_dict[nrand] = sparse.csr_matrix(A_GRN_arr_rand)
-            sparse.save_npz(proj_path + input_GRN + '_' + npz_folder_name + '%s_A_GRN_sparr_rand_%s.npz' % (input_GRN, nrand), 
+            sparse.save_npz(proj_path + '%s_%s_%s/%s_%s_A_GRN_sparr_rand_%s.npz' % (input_GRN, input_PPI, npz_folder_name, input_GRN, input_PPI, nrand), 
                             A_GRN_sparr_rand_dict[nrand])          
         
         if return_output==True:        
@@ -3072,23 +3073,23 @@ def randomize_GRN_npz(A_GRN_sparr, proj_path, input_GRN, npz_folder_name, N_runs
             
     else:
         
-        A_GRN_sparr_rand_dict = read_A_GRN_sparr_rand_from_npz(proj_path, input_GRN, npz_folder_name, get_n=get_n, get_randomly=get_randomly)
+        A_GRN_sparr_rand_dict = read_A_GRN_sparr_rand_from_npz(proj_path, input_GRN, input_PPI, npz_folder_name, get_n=get_n, get_randomly=get_randomly)
                 
         return A_GRN_sparr_rand_dict
 
-def randomize_KEGG_e_npz(A_KEGG_e_sparr_dict, KEGG_interaction_types_dict, proj_path, input_GRN, npz_folder_name, N_runs=500, N_swap=10, 
+def randomize_KEGG_e_npz(A_KEGG_e_sparr_dict, KEGG_interaction_types_dict, proj_path, input_PPI, npz_folder_name, N_runs=500, N_swap=10, 
                          get_n=100, get_randomly=True, return_output=False):
 
-    if not os.path.exists(proj_path + npz_folder_name):   
+    if not os.path.exists(proj_path + '%s_%s/' % (input_PPI, npz_folder_name)):   
  
         sparr_rand_npz_file_names_dict = {'activation': 'Activation', 'binding/association': 'Binding_Association', 'compound': 'Compound',
                               'dephosphorylation': 'Dephosphorylation', 'dissociation': 'Dissociation', 'indirect effect': 'Indirect_effect',
                               'inhibition': 'Inhibition', 'phosphorylation': 'Phosphorylation', 'state change': 'State_change', 
                               'ubiquitination': 'Ubiquitination', 'ppi': 'PPI'}
 
-        os.makedirs(proj_path + npz_folder_name)
+        os.makedirs(proj_path + '%s_%s/' % (input_PPI, npz_folder_name))
         for e in sparr_rand_npz_file_names_dict.keys():
-            os.makedirs(proj_path + npz_folder_name + sparr_rand_npz_file_names_dict[e])
+            os.makedirs(proj_path + '%s_%s/%s/' % (input_PPI, npz_folder_name, sparr_rand_npz_file_names_dict[e]))
            
         print('Computing ensemble of randomized edge type-specific KEGG sparse matrices...')
         A_KEGG_e_sparr_rand_dict = {i: {} for i in np.arange(N_runs)}
@@ -3097,26 +3098,27 @@ def randomize_KEGG_e_npz(A_KEGG_e_sparr_dict, KEGG_interaction_types_dict, proj_
             for e in np.concatenate([sorted(list(set(KEGG_interaction_types_dict.keys()) - set(['ppi']))), ['ppi']]):
                 A_KEGG_e_arr_rand, A_KEGG_e_nrew_rand = edge_swap_undir_sign(A_KEGG_e_sparr_dict[e].toarray(), N_swap)
                 A_KEGG_e_sparr_rand_dict[nrand][e] = sparse.csr_matrix(A_KEGG_e_arr_rand) 
-                sparse.save_npz(proj_path + npz_folder_name + '%s/A_KEGG_e_sparr_rand_%s_%s.npz' % 
-                                (sparr_rand_npz_file_names_dict[e], nrand, sparr_rand_npz_file_names_dict[e]), A_KEGG_e_sparr_rand_dict[nrand][e])
+                sparse.save_npz(proj_path + '%s_%s/%s/%s_A_KEGG_e_sparr_rand_%s_%s.npz' % 
+                							(input_PPI, npz_folder_name, sparr_rand_npz_file_names_dict[e], input_PPI, nrand, sparr_rand_npz_file_names_dict[e]), 
+                				A_KEGG_e_sparr_rand_dict[nrand][e])
 
         if return_output==True:
             return A_KEGG_e_sparr_rand_dict
         
     else:
         
-        A_KEGG_e_sparr_rand_dict = read_A_KEGG_e_sparr_rand_from_npz(proj_path, npz_folder_name, get_n=get_n, get_randomly=get_randomly)
+        A_KEGG_e_sparr_rand_dict = read_A_KEGG_e_sparr_rand_from_npz(proj_path, input_PPI, npz_folder_name, get_n=get_n, get_randomly=get_randomly)
          
         return A_KEGG_e_sparr_rand_dict        
 
-def randomize_KEGGPPI_npz(KEGG_PPI_allnodes_entrez, KEGG_interaction_types_dict, proj_path, input_GRN, 
+def randomize_KEGGPPI_npz(KEGG_PPI_allnodes_entrez, KEGG_interaction_types_dict, proj_path, input_PPI, 
                       A_KEGG_e_npz_folder_name, A_KEGGPPI_npz_folder_name, get_n=100, get_randomly=True, return_output=False):
     
-    if not os.path.exists(proj_path + A_KEGGPPI_npz_folder_name):  
+    if not os.path.exists(proj_path + '%s_%s/' % (input_PPI, A_KEGGPPI_npz_folder_name)):  
         
-        os.makedirs(proj_path + A_KEGGPPI_npz_folder_name)
+        os.makedirs(proj_path + '%s_%s/' % (input_PPI, A_KEGGPPI_npz_folder_name))
         
-        A_KEGG_e_sparr_rand_dict = read_A_KEGG_e_sparr_rand_from_npz(proj_path, A_KEGG_e_npz_folder_name, get_n=get_n, get_randomly=get_randomly)
+        A_KEGG_e_sparr_rand_dict = read_A_KEGG_e_sparr_rand_from_npz(proj_path, input_PPI, A_KEGG_e_npz_folder_name, get_n=get_n, get_randomly=get_randomly)
     
         print('Computing ensemble of randomized KEGG+PPI combined sparse  matrices...')
         A_KEGGPPI_sparr_rand_dict = {}
@@ -3133,23 +3135,23 @@ def randomize_KEGGPPI_npz(KEGG_PPI_allnodes_entrez, KEGG_interaction_types_dict,
             temp_sparse = temp_sparse + (abs(A_KEGG_e_sparr_rand_dict[nrand]['ppi'])==KEGG_interaction_types_dict['ppi']).astype(int)      
 
             A_KEGGPPI_sparr_rand_dict[nrand] = (temp_sparse!=0).astype(int)
-            sparse.save_npz(proj_path + A_KEGGPPI_npz_folder_name + 'A_KEGGPPI_sparr_rand_%s.npz' % nrand, A_KEGGPPI_sparr_rand_dict[nrand])            
+            sparse.save_npz(proj_path + '%s_%s/%s_A_KEGGPPI_sparr_rand_%s.npz' % (input_PPI, A_KEGGPPI_npz_folder_name, input_PPI, nrand), A_KEGGPPI_sparr_rand_dict[nrand])            
       
         if return_output==True:
             return A_KEGGPPI_sparr_rand_dict
         
     else:
         
-        A_KEGGPPI_sparr_rand_dict = read_A_KEGGPPI_sparr_rand_from_npz(proj_path, A_KEGGPPI_npz_folder_name, get_n=get_n, 
+        A_KEGGPPI_sparr_rand_dict = read_A_KEGGPPI_sparr_rand_from_npz(proj_path, input_PPI, A_KEGGPPI_npz_folder_name, get_n=get_n, 
                                                                        get_randomly=get_randomly)
 
         return A_KEGGPPI_sparr_rand_dict     
 
 def randomize_KEGG_npz(A_KEGG_sparr, proj_path, npz_folder_name, N_runs=500, N_swap=10, get_n=100, get_randomly=True, return_output=False):
 
-    if not os.path.exists(proj_path + npz_folder_name):    
+    if not os.path.exists(proj_path + '%s/' % npz_folder_name):    
 
-        os.makedirs(proj_path + npz_folder_name)
+        os.makedirs(proj_path + '%s/' % npz_folder_name)
         
         print('Computing ensemble of randomized KEGG sparse matrices...')    
     
@@ -3158,7 +3160,7 @@ def randomize_KEGG_npz(A_KEGG_sparr, proj_path, npz_folder_name, N_runs=500, N_s
         for nrand in tqdm(np.arange(N_runs), position=0, leave=True):
             A_KEGG_arr_rand, A_KEGG_nrew_rand = edge_swap(A_KEGG_sparr.toarray(), N_swap)
             A_KEGG_sparr_rand_dict[nrand] = sparse.csr_matrix(A_KEGG_arr_rand)
-            sparse.save_npz(proj_path + npz_folder_name + 'A_KEGG_sparr_rand_%s.npz' % nrand, A_KEGG_sparr_rand_dict[nrand])            
+            sparse.save_npz(proj_path + '%s/A_KEGG_sparr_rand_%s.npz' % (npz_folder_name, nrand), A_KEGG_sparr_rand_dict[nrand])            
                 
         if return_output==True:        
             return A_KEGG_sparr_rand_dict
@@ -3169,7 +3171,7 @@ def randomize_KEGG_npz(A_KEGG_sparr, proj_path, npz_folder_name, N_runs=500, N_s
     
         return A_KEGG_sparr_rand_dict        
 
-def run_MuXTalk_npz(proj_path, input_filenames_dict, npz_filenames_dict, input_GRN, input_PPI, MuXTalk_method='MuXTalk_shortest', 
+def run_MuXTalk_npz(proj_path, input_filenames_dict, npz_filenames_dict, input_GRN, input_GRN_ID_format, input_PPI, input_PPI_ID_format, MuXTalk_method='MuXTalk_shortest', 
                     get_n=100, get_randomly=True, N_runs=500, N_swap=10, sp_threshold=1, parquet=False):
     
     sparr_rand_npz_file_names_dict = {'activation': 'Activation', 'binding/association': 'Binding_Association', 'compound': 'Compound',
@@ -3190,13 +3192,13 @@ def run_MuXTalk_npz(proj_path, input_filenames_dict, npz_filenames_dict, input_G
     
     KEGG_all_paths_sansIL17 = set(KEGG_all_paths) - set(['IL-17 signaling pathway'])
     
-    A_GRN_sparr_rand_dict = randomize_GRN_npz(A_GRN_sparr, proj_path, input_GRN, npz_filenames_dict['GRN'], N_runs=500, N_swap=10, 
+    A_GRN_sparr_rand_dict = randomize_GRN_npz(A_GRN_sparr, proj_path, input_GRN, input_PPI, npz_filenames_dict['GRN'], N_runs=500, N_swap=10, 
                                               get_n=get_n, get_randomly=get_randomly, return_output=False)
-    A_KEGG_e_sparr_rand_dict = randomize_KEGG_e_npz(A_KEGG_e_sparr_dict, KEGG_interaction_types_dict, proj_path, input_GRN, 
+    A_KEGG_e_sparr_rand_dict = randomize_KEGG_e_npz(A_KEGG_e_sparr_dict, KEGG_interaction_types_dict, proj_path, input_PPI, 
                                                      npz_filenames_dict['KEGG_e'], N_runs=500, N_swap=10, get_n=get_n, get_randomly=get_randomly, 
                                                     return_output=False)
     A_KEGGPPI_sparr_rand_dict = randomize_KEGGPPI_npz(KEGG_PPI_allnodes_entrez, KEGG_interaction_types_dict, proj_path, 
-                                                  input_GRN, npz_filenames_dict['KEGG_e'], npz_filenames_dict['KEGGPPI'], 
+                                                  input_PPI, npz_filenames_dict['KEGG_e'], npz_filenames_dict['KEGGPPI'], 
                                                   get_n=get_n, get_randomly=get_randomly, return_output=False)
     
     if MuXTalk_method == 'MuXTalk_between':
@@ -3205,7 +3207,7 @@ def run_MuXTalk_npz(proj_path, input_filenames_dict, npz_filenames_dict, input_G
                                                                                           KEGG_path_nodes_entrez_dict, A_GRN_sparr, A_KEGGPPI_sparr, 
                                                                                           all_motif_types_list, all_motif_types, 
                                                                                           KEGG_interaction_types_dict, A_KEGG_e_sparr_dict, 
-                                                                                          proj_path, input_GRN)
+                                                                                          proj_path, input_GRN, input_PPI)
 
         between_paths_multilink_counts_rand_df_dict = between_paths_multilink_counts_rand_discovery(A_GRN_sparr_rand_dict, KEGG_all_paths_sansIL17,
                                                                                                     KEGG_PPI_allnodes_entrez_df, 
@@ -3213,13 +3215,13 @@ def run_MuXTalk_npz(proj_path, input_filenames_dict, npz_filenames_dict, input_G
                                                                                                     A_KEGGPPI_sparr_rand_dict, all_motif_types_list, 
                                                                                                     KEGG_interaction_types_dict, 
                                                                                                     A_KEGG_e_sparr_rand_dict, 
-                                                                                                    proj_path, input_GRN, N_rand = 100, N_swap = 10)
+                                                                                                    proj_path, input_GRN, input_PPI, N_rand = 100, N_swap = 10)
 
         (between_paths_multilink_counts_stats_df_dict, 
          between_paths_rand_zscores_df_dict) = between_paths_multilink_zscores_pvals_discovery(KEGG_all_paths_sansIL17, 
                                                                                                between_paths_multilink_counts_rand_df_dict, 
                                                                                                between_paths_multilink_counts_df_dict, 
-                                                                                               all_motif_types, proj_path, input_GRN, N_rand=100)
+                                                                                               all_motif_types, proj_path, input_GRN, input_PPI, N_rand=100)
 
         (between_detected_ranked_pathway_pairs_df, between_detected_ranked_pathway_pairs, 
          between_ranked_pathway_pairs_df, between_ranked_pathway_pairs, 
@@ -3231,21 +3233,21 @@ def run_MuXTalk_npz(proj_path, input_filenames_dict, npz_filenames_dict, input_G
         
         shortest_path_edges_dict, shortest_path_intermediaries_dict = get_shortest_paths_discovery(A_KEGGPPI_sparr, KEGG_all_paths_sansIL17, 
                                                                                                    KEGG_PPI_allnodes_entrez_df, 
-                                                                                                   KEGG_path_nodes_entrez_dict, proj_path, 
+                                                                                                   KEGG_path_nodes_entrez_dict, proj_path, input_PPI,
                                                                                                    sp_threshold=sp_threshold)
 
         shortest_paths_multilink_counts_df_dict = shortest_paths_multilink_counts_discovery(KEGG_all_paths_sansIL17, shortest_path_edges_dict, 
                                                                                             sp_threshold, A_GRN_sparr, A_KEGGPPI_sparr, 
                                                                                             all_motif_types, all_motif_types_list, 
                                                                                             KEGG_interaction_types_dict, A_KEGG_e_sparr_dict, 
-                                                                                            proj_path, input_GRN)
+                                                                                            proj_path, input_GRN, input_PPI)
 
         shortest_paths_multilink_counts_rand_df_dict = shortest_paths_multilink_counts_rand_discovery(A_GRN_sparr_rand_dict, KEGG_all_paths_sansIL17, 
                                                                                                       shortest_path_edges_dict, sp_threshold, 
                                                                                                       all_motif_types, A_KEGGPPI_sparr_rand_dict, 
                                                                                                       all_motif_types_list, 
                                                                                                       KEGG_interaction_types_dict, 
-                                                                                                      A_KEGG_e_sparr_rand_dict, proj_path, input_GRN, 
+                                                                                                      A_KEGG_e_sparr_rand_dict, proj_path, input_GRN, input_PPI, 
                                                                                                       N_rand = 100, N_swap = 10)
 
         (shortest_paths_multilink_counts_stats_df_dict, 
@@ -3253,7 +3255,7 @@ def run_MuXTalk_npz(proj_path, input_filenames_dict, npz_filenames_dict, input_G
                                                                                                  shortest_paths_multilink_counts_rand_df_dict, 
                                                                                                  sp_threshold, 
                                                                                                  shortest_paths_multilink_counts_df_dict, 
-                                                                                                 all_motif_types, proj_path, input_GRN, N_rand=100)
+                                                                                                 all_motif_types, proj_path, input_GRN, input_PPI, N_rand=100)
 
         (shortest_detected_ranked_pathway_pairs_df, shortest_detected_ranked_pathway_pairs, 
          shortest_ranked_pathway_pairs_df, shortest_ranked_pathway_pairs, 
