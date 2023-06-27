@@ -31,7 +31,7 @@ docker load --input muxtalk_slim.tar
 
 - As an example use case, type in the below command in the terminal to run the MuXTalk image as a container. /path/to/MuXTalk_Docker_mount/ is where the folder you downloaded is located in your computer. Details about the MuXTalk parameters can be found in the following sections.
 ```
-docker run -it -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm rduh/muxtalk:slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
+docker run -it -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm rduh/muxtalk:slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --input_PPI=PPI_Cheng_NatComms2019 --input_PPI_ID_format=Entrez --MuXTalk_method=MuXTalk_shortest --sp_threshold=1
 ```
 
 #### 2) Run the MuXTalk script directly (requires conda to be installed). 
