@@ -27,7 +27,7 @@ or loaded from the [.tar file](https://www.dropbox.com/s/pz0w9gn7ezqp3ct/muxtalk
 docker load --input muxtalk_slim.tar
 ```
 
-- [Download](https://www.dropbox.com/sh/ztlc8spxyvu5cgn/AABVSaaTLQQUrs3_SwLo-B8ca?dl=0) the MuXTalk folder to be mounted as a volume to the Docker container. This local folder (i.e., located in the user's machine), named /MuXTalk_Docker_mount/, will act as the main folder in which the MuXTalk container will read and write files.
+- [Download](https://www.dropbox.com/sh/jhir7f3srikhjxj/AAC_Mjk2tzJ6OiMdJp7PEg9Ua?dl=0) the MuXTalk folder to be mounted as a volume to the Docker container. This local folder (i.e., located in the user's machine), named /MuXTalk_Docker_mount/, will act as the main folder in which the MuXTalk container will read and write files.
 
 - As an example use case, type in the below command in the terminal to run the MuXTalk image as a container. /path/to/MuXTalk_Docker_mount/ is where the folder you downloaded is located in your computer. Details about the MuXTalk parameters can be found in the following sections.
 ```
