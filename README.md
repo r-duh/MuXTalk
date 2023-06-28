@@ -110,8 +110,8 @@ python run_MuXTalk_v2.py --proj_path=/path/to/MuXTalk_Docker_mount/ --input_GRN=
 
 Running the above script will result in the main output of MuXTalk, i.e., the two files named "input_GRN_input_PPI_sp_threshold_MuXTalk_method_detected_discovery.csv" and "input_GRN_input_PPI_sp_threshold_MuXTalk_method_discovery.csv" where input_GRN, input_PPI, sp_threshold and MuXTalk_method are the user-defined parameters. These files contain the MuXTalk-ranked lists of pathway pairs for the "detected" (meaning pathway pairs that were assessed by MuXTalk, excluding the pathway pairs that had no shortest paths between them in the PPI network) and complete set, respectively.
 
-## Running MuXTalk with custom GRNs
-- Once MuXTalk is set up, we can also run it with user-defined GRNs. For this, we need to first add into our local MuXTalk folder (/path/to/MuXTalk_Docker_mount/) an edgelist file for the custom GRN named "customGRN_edges.csv". This file must have two columns, without headers, the first one for the source gene (or transcription factor) and the second one for the target gene, as shown below. "customGRN" will also be the name of the input_GRN variable. Genes must have Gene Symbols as identifiers; MuXTalk will take care of all the ID conversions.
+## Running MuXTalk with custom GRNs and PPI networks
+- Once MuXTalk is set up, we can also run it with user-defined GRNs and PPI networks. For this, we need to first add into our local MuXTalk folder (/path/to/MuXTalk_Docker_mount/) an edgelist file for the custom GRN and/or PPI network named "customGRN_edges.csv" and/or "customPPI_edges.csv" where "customGRN" and "customPPI" can be user-defined names. This file must have two columns, without headers: For GRN: the first one for the source gene (or transcription factor) and the second one for the target gene, as shown below, or for PPI, the first one for Protein A and the second one for Protein B. "customGRN" and "customPPI" will also be the name of the input_GRN and input_PPI variable, respectively. Genes can have Gene Symbols or Entrez IDs as identifiers; MuXTalk will take care of all the ID conversions.
 
 |  |  |
 | --- | --- |
@@ -120,9 +120,9 @@ Running the above script will result in the main output of MuXTalk, i.e., the tw
 | Source Gene E | Target Gene F |
 | ... | ... |
  
-- When we run MuXTalk with --input_GRN=customGRN with customGRN_edges.csv in /path/to/MuXTalk_Docker_mount/, MuXTalk will create the randomized versions of the custom GRN and store them in the /customGRN_A_GRN_sparr_rand_npz_files/ folder. This folder is initially empty and is populated as MuXTalk runs. This step will have to be only done once per each new GRN. Here is an example that uses the same parameters but on a custom GRN provided by the user.
+- When we run MuXTalk with --input_GRN=customGRN with customGRN_edges.csv (and/or --input_PPI=customPPI with customPPI_edges.csv) in /path/to/MuXTalk_Docker_mount/, MuXTalk will create the randomized versions of the custom GRN and signaling networks and store them in the /customGRN_customPPI_A_GRN_sparr_rand_npz_files/,  /customPPI_A_KEGG_e_sparr_rand_npz_files/ and /customPPI_A_KEGGPPI_sparr_rand_npz_files/ folders. These folders are created and populated as MuXTalk runs. This step will have to be only done once per each new GRN/PPI combination. Here is an example that uses the same parameters but on a custom GRN and PPI provided by the user.
 ```
-docker run -it -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm rduh/muxtalk:slim --proj_path=/MuXTalk_app/ --input_GRN=customGRN --input_PPI=PPI_Cheng_NatComms2019 --input_PPI_ID_format=Entrez --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
+docker run -it -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm rduh/muxtalk:slim --proj_path=/MuXTalk_app/ --input_GRN=customGRN --input_PPI=customPPI --input_PPI_ID_format=Entrez --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
 ```
 
 
