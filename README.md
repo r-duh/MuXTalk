@@ -122,7 +122,7 @@ Running the above script will result in the main output of MuXTalk, i.e., the tw
  
 - When we run MuXTalk with --input_GRN=customGRN with customGRN_edges.csv (and/or --input_PPI=customPPI with customPPI_edges.csv) in /path/to/MuXTalk_Docker_mount/, MuXTalk will create the randomized versions of the custom GRN and signaling networks and store them in the /customGRN_customPPI_A_GRN_sparr_rand_npz_files/,  /customPPI_A_KEGG_e_sparr_rand_npz_files/ and /customPPI_A_KEGGPPI_sparr_rand_npz_files/ folders. These folders are created and populated as MuXTalk runs. This step will have to be only done once per each new GRN/PPI combination. Here is an example that uses the same parameters but on a custom GRN and PPI provided by the user.
 ```
-docker run -it -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm rduh/muxtalk:slim --proj_path=/MuXTalk_app/ --input_GRN=customGRN --input_PPI=customPPI --input_PPI_ID_format=Entrez --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
+docker run -it -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm rduh/muxtalk:slim --proj_path=/MuXTalk_app/ --input_GRN=customGRN --input_PPI=customPPI --input_PPI_ID_format=Gene_Symbol --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=True
 ```
 
 
