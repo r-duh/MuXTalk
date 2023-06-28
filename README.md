@@ -121,7 +121,7 @@ Running the above script will result in the main output of MuXTalk, i.e., the tw
  
 - When we run MuXTalk with --input_GRN=custom_GRN with customGRN_edges.csv in /path/to/MuXTalk_Docker_mount/, MuXTalk will create the randomized versions of the custom GRN and store them in the /customGRN_A_GRN_sparr_rand_npz_files/ folder. This folder is initially empty and is populated as MuXTalk runs. This step will have to be only done once per each new GRN. Here is an example that uses the same parameters but on a custom GRN provided by the user.
 ```
-docker run -it -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm rduh/muxtalk:slim --proj_path=/MuXTalk_app/ --input_GRN=customGRN --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
+docker run -it -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm rduh/muxtalk:slim --proj_path=/MuXTalk_app/ --input_GRN=customGRN --input_PPI=PPI_Cheng_NatComms2019 --input_PPI_ID_format=Entrez --MuXTalk_method=MuXTalk_shortest --get_n=150 --get_randomly=True --sp_threshold=1 --parquet=False
 ```
 
 
