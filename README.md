@@ -11,7 +11,7 @@ A network-based statistical framework to infer and explore crosstalk between sig
 
 **Preprint URL:** https://www.biorxiv.org/content/10.1101/2022.09.29.510183v1
 
-<!-- ![Graphical Abstract for the MuXTalk framework](https://github.com/r-duh/MuXTalk/blob/main/.png?raw=true) -->
+![Overview of the MuXTalk framework](https://github.com/r-duh/MuXTalk/blob/main/MuXTalk_Overview.png?raw=true)
 
 ## Running MuXTalk locally (recommended for user-defined GRNs)
 
