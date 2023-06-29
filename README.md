@@ -187,18 +187,12 @@ streamlit run MuXTalk_viz_Streamlit_Docker.py -- --proj_path=/path/to/MuXTalk_St
 
 
 ### Visualizing custom GRNs using the MuXTalk Streamlit app
-For this  option, you first need to run MuXTalk with the GRN and/or PPI of your choosing
-	following the instructions above. After running MuXTalk, you can use its output 
-	for visualization. You will need the following outputs of MuXTalk to be present in the /MuXTalk_Docker_mount/ directory:
-	- The output .parquet file that ends with "_detected_discovery.parquet"
-	- The customGRN_edges.csv file where "customGRN" can be a user-defined name. Please note the **ID format** in this file (Gene Symbol or Entrez ID) 
-	as it will be a required input.
-	- The customPPI_edges.csv file where "customPPI" can be a user-defined name. Please note the **ID format** in this file (Gene Symbol or Entrez ID) 
-	as it will be a required input.
-	- If using the "MuXTalk_shortest" method, the file that ends with "_shortest_path_edges_dict_discovery.pickle". Please note the 
-	**shortest path threshold** in the name of this file (**sp1**, etc.) as it will be a required input.\n
-	- After you confirm that all of these files are in /MuXTalk_Docker_mount/, you can simply fill in the custom input information box with the 
-	required information and press the submit button.
+For this  option, you first need to run MuXTalk with the GRN and/or PPI of your choosing following the instructions above. After running MuXTalk, you can use its output for visualization. You will need the following outputs of MuXTalk to be present in the /MuXTalk_Docker_mount/ directory:
+- The output .parquet file that ends with "_detected_discovery.parquet"
+- The customGRN_edges.csv file where "customGRN" can be a user-defined name. Please note the **ID format** in this file (Gene Symbol or Entrez ID) as it will be a required input.
+- The customPPI_edges.csv file where "customPPI" can be a user-defined name. Please note the **ID format** in this file (Gene Symbol or Entrez ID) as it will be a required input.
+- If using the "MuXTalk_shortest" method, the file that ends with "_shortest_path_edges_dict_discovery.pickle". Please note the **shortest path threshold** in the name of this file (**sp1**, etc.) as it will be a required input.
+- After you confirm that all of these files are in /MuXTalk_Docker_mount/, you can simply fill in the custom input information box with the required information and press the submit button.
 
 
 ## Troubleshooting
