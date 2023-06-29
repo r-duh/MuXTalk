@@ -5,6 +5,8 @@ from itertools import product
 from tqdm import tqdm
 from scipy import sparse
 import json
+import os
+import pickle
 
 # Input must be in the form of GRN edgelist (tab-separated) with two columns for source (TF) and target, respectively, and with no headers. 
 @st.cache(show_spinner=False, allow_output_mutation=True)
@@ -339,3 +341,25 @@ def return_shortest_multilink_edges_forStreamlit(proj_path, sp_threshold, input_
 
     return shortest_multilink_edges_df         
         
+
+@st.cache(show_spinner=False, allow_output_mutation=True)
+def sp_dict_pickle2json(proj_path, input_PPI, sp_threshold, KEGG_all_paths_sansIL17):
+		
+	if not os.path.exists(proj_path + '%s_sp%s_discovery_shortest_path_dicts/' % (input_PPI, sp_threshold)):
+	
+		os.makedirs(proj_path + '%s_sp%s_discovery_shortest_path_dicts/' % (input_PPI, sp_threshold))
+		
+		with open(proj_path + '%s_sp%s_shortest_path_edges_dict_discovery.pickle' % (input_PPI, sp_threshold), 'rb') as fp:
+			shortest_path_edges_dict = pickle.load(fp)
+               
+		for p1 in tqdm(sorted(list(KEGG_all_paths_sansIL17)), position=0, leave=True):    
+			with open(proj_path + '%s_sp%s_discovery_shortest_path_dicts/%s.json' % (input_PPI, sp_threshold, p1), 'w') as fp:
+		
+				temp_dict = {}
+		
+				for p2 in sorted(list(KEGG_all_paths_sansIL17 - set([p1]))):
+		
+					temp_dict[p2] = [(int(x1), int(x2)) for x1, x2 in list(shortest_path_edges_dict[(p1, p2)])]
+	   
+				json.dump(temp_dict, fp) 
+				

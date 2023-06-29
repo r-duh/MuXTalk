@@ -15,10 +15,18 @@ st.set_page_config(layout='wide')
 input_GRN = st.sidebar.selectbox('Select GRN', ['HumanGRN10e6', 'HumanGRN10e5', 'HumanGRN10e4'])
 MuXTalk_method = st.sidebar.selectbox('Select MuXTalk type', ['MuXTalk_shortest', 'MuXTalk_between'])
 sp_threshold = st.sidebar.selectbox('Select shortest path threshold (MuXTalk_shortest only)', [2, 1, 'None'])
-st.sidebar.write(''' *** ''')
-custom_GRN_edges = st.sidebar.file_uploader('Custom GRN edges')
-custom_PPI_edges = st.sidebar.file_uploader('Custom PPI edges')
-custom_GRN_parquet = st.sidebar.file_uploader('Custom GRN/PPI .parquet file')
+# st.sidebar.write(''' *** ''')
+with st.sidebar.form(key='Custom GRN/PPI input'):
+	custom_GRN = st.text_input('Enter the name of the custom GRN.')
+	custom_GRN_ID_format = st.selectbox('Select Custom GRN ID format', ['Gene_Symbol', 'Entrez'])
+	custom_PPI = st.text_input('Enter the name of the custom PPI.')
+	custom_PPI_ID_format = st.selectbox('Select Custom PPI ID format', ['Gene_Symbol', 'Entrez'])
+	custom_MuXTalk_method = st.selectbox('Select the MuXTalk type.', ['MuXTalk_shortest', 'MuXTalk_between'])
+	custom_sp_threshold = st.selectbox('Select shortest path threshold (MuXTalk_shortest only)', [2, 1, 'None'])
+	submit_button = st.form_submit_button(label='Run MuXTalk with custom inputs')
+# custom_GRN_edges = st.sidebar.file_uploader('Custom GRN edges')
+# custom_PPI_edges = st.sidebar.file_uploader('Custom PPI edges')
+# custom_GRN_parquet = st.sidebar.file_uploader('Custom GRN/PPI .parquet file')
 
 with st.container():
 	'''
@@ -51,30 +59,26 @@ with expander_readme:
 	**Reference:** [Detecting and dissecting signaling crosstalk via the multilayer network integration of 
 	signaling and regulatory interactions](https://www.biorxiv.org/content/10.1101/2022.09.29.510183v1.full) \n	
 	This is the visualization component of the [MuXTalk framework](https://github.com/r-duh/MuXTalk), 
-	where users can explore the crosstalk between 60 pairs of KEGG pathways. There are two options to use 
+	where users can explore the crosstalk between 60 pairs of KEGG pathways. There are two ways of using 
 	this MuXTalk visualization app: \n
-	1) Using the **default** human gene regulatory networks (GRNs) presented in the manuscript as input. 
+	1) Using the **default** human gene regulatory networks (GRNs) and **default** PPI network (Cheng et al., Nature Communications, 2019) 
+	presented in the manuscript as input. 
 	For this option, you can simply select the desired GRN (from the least dense (HumanGRN10e-6) to the densest 
 	(HumanGRN10e-6) network) and choose which MuXTalk method to use. \n
-	2) Using **custom GRNs** as input. For this  option, you first need to run MuXTalk with the custom GRN following the 
-	instructions on the [GitHub page](https://github.com/r-duh/MuXTalk). After running MuXTalk, you can use its output 
-	for visualization. You will need to provide three files: \n
-	- The custom GRN edgelist file. This file should consist of two columns, without headers, the first one for 
-	the source gene (or transcription factor) and the second one for the target gene, 
-	as described on the GitHub page. This is also the file you used with MuXTalk as the input_GRN 
-	edgelist file ("customGRN_edges.csv"). \n
-	- The custom PPI edgelist file. This file should consist of two columns, without headers, the first one for 
-	Protein A and the second one for Protein B, 
-	as described on the GitHub page. This is also the file you used with MuXTalk as the input_PPI 
-	edgelist file ("customPPI_edges.csv"). \n
-	- The output of MuXTalk in .parquet format, which includes the list of prioritized pathway pairs predicted by MuXTalk
-	("..._detected_discovery.parquet").\n	
-	- Please ensure that the names of the GRN and PPI as they appear in the .parquet file are also entered and the correct ID 
-	format (Gene Symbol or Entrez ID) is chosen for each network. \n
-	- Finally, make sure all files generated for the custom GRN/PPI by MuXTalk in the /MuXTalk_Docker_mount/ directory are 
-	transferred to the /MuXTalk_Streamlit_Docker_mount/ directory for visualization. Alternatively, the user can choose to 
-	designate the same mount directory for both MuXTalk and its Streamlit app. \n
-	Once the MuXTalk options are selected or the custom files are uploaded, this Streamlit app will **initialize** the 
+	2) Using **custom GRNs and PPI networks** as input. For this  option, you first need to run MuXTalk with the GRN and/or PPI of your choosing
+	following the instructions on the [GitHub page](https://github.com/r-duh/MuXTalk). After running MuXTalk, you can use its output 
+	for visualization. You will need the following outputs of MuXTalk to be present in the /MuXTalk_Docker_mount/ directory:
+	- The output .parquet file that ends with "_detected_discovery.parquet"
+	- The customGRN_edges.csv file where "customGRN" can be a user-defined name. Please note the **ID format** in this file (Gene Symbol or Entrez ID) 
+	as it will be a required input.
+	- The customPPI_edges.csv file where "customPPI" can be a user-defined name. Please note the **ID format** in this file (Gene Symbol or Entrez ID) 
+	as it will be a required input.
+	- If using the "MuXTalk_shortest" method, the file that ends with "_shortest_path_edges_dict_discovery.pickle". Please note the 
+	**shortest path threshold** in the name of this file (**sp1**, etc.) as it will be a required input.\n
+	- After you confirm that all of these files are in /MuXTalk_Docker_mount/, you can simply fill in the custom input information box with the 
+	required information and press the submit button.
+	
+	Once the default MuXTalk options are selected or the custom GRN/PPI information is entered, this Streamlit app will **initialize** the 
 	networks for visualization and display the ranked list of pathway pairs. You can inspect this list for the pathway
 	pairs that are the most likely to crosstalk as per the MuXTalk algorithm. \n
 	After Pathway A and Pathway B are chosen, the corresponding **significant multilink types** that MuXTalk predicted to 
@@ -128,7 +132,7 @@ with legend_readme:
 	
 	''')
 
-if (custom_GRN_edges is None) & (custom_PPI_edges is None) & (custom_GRN_parquet is None):
+if not submit_button: # (custom_GRN_edges is None) & (custom_PPI_edges is None) & (custom_GRN_parquet is None):
 				   
 	expander_status = st.expander(label='MuXTalk progress status', expanded=True)
 	with expander_status:
@@ -174,15 +178,15 @@ if (custom_GRN_edges is None) & (custom_PPI_edges is None) & (custom_GRN_parquet
 
 		st.session_state['detected_ranked_pathway_pairs_df'] = pd.read_parquet(args.proj_path + '%s_%s_shortest_sp%s_detected_discovery.parquet' % (input_GRN, input_PPI, sp_threshold))
 
-elif (custom_GRN_edges is not None) & (custom_PPI_edges is not None) & (custom_GRN_parquet is not None):
+elif submit_button:# (custom_GRN_edges is not None) & (custom_PPI_edges is not None) & (custom_GRN_parquet is not None):
 
-	input_GRN = st.sidebar.text_input('Enter the name of the Custom GRN as it appears on the .parquet file.')
-	input_GRN_ID_format = st.sidebar.selectbox('Select Custom GRN ID format', ['Gene_Symbol', 'Entrez'])
-	input_PPI = st.sidebar.text_input('Enter the name of the Custom PPI as it appears on the .parquet file.')
-	input_PPI_ID_format = st.sidebar.selectbox('Select Custom PPI ID format', ['Gene_Symbol', 'Entrez'])
+# 	input_GRN = st.sidebar.text_input('Enter the name of the Custom GRN as it appears on the .parquet file.')
+# 	input_GRN_ID_format = st.sidebar.selectbox('Select Custom GRN ID format', ['Gene_Symbol', 'Entrez'])
+# 	input_PPI = st.sidebar.text_input('Enter the name of the Custom PPI as it appears on the .parquet file.')
+# 	input_PPI_ID_format = st.sidebar.selectbox('Select Custom PPI ID format', ['Gene_Symbol', 'Entrez'])
 	
-	if (input_GRN == '') | (input_PPI == ''):
-		st.error('If entering a custom GRN, please ensure that the names of GRN and PPI networks are both provided.')
+	if (custom_GRN == '') | (custom_PPI == ''):
+		st.error('If entering a custom GRN, please ensure that all fields are filled properly based on the .parquet file used.')
 		st.stop()
 
 	expander_status = st.expander(label='MuXTalk progress status', expanded=True)
@@ -193,7 +197,7 @@ elif (custom_GRN_edges is not None) & (custom_PPI_edges is not None) & (custom_G
 
 	(KEGG_PPI_allnodes_entrez, GRN_KEGG_PPI_edges, PPI_all_edges_entrez, KEGG_PPI_all_edges_entrez, KEGG_PPI_allnodes_entrez_df, 
 	 KEGG_interaction_types_dict, KEGG_all_edges_entrez, KEGG_all_paths, KEGG_path_nodes_entrez_dict, 
-	 all_motif_types, all_motif_types_list) = process_data(args.proj_path, input_PPI, input_PPI_ID_format, input_GRN, input_GRN_ID_format, input_filenames_dict)
+	 all_motif_types, all_motif_types_list) = process_data(args.proj_path, custom_PPI, custom_PPI_ID_format, custom_GRN, custom_GRN_ID_format, input_filenames_dict)
 
 	KEGG_all_paths_sansIL17 = set(KEGG_all_paths) - set(['IL-17 signaling pathway'])
 	st.session_state['KEGG_all_paths_sansIL17'] = KEGG_all_paths_sansIL17
@@ -208,6 +212,8 @@ elif (custom_GRN_edges is not None) & (custom_PPI_edges is not None) & (custom_G
 	G_KEGGPPI = nx.from_scipy_sparse_matrix(A_KEGGPPI_sparr.astype(bool).astype(int))
 	G_KEGGPPI_entrez = nx.relabel_nodes(G_KEGGPPI, KEGG_PPI_allnodes_entrez_df[[0, 'ix']].to_dict()[0])
 
+	sp_dict_pickle2json(args.proj_path, custom_PPI, custom_sp_threshold, st.session_state['KEGG_all_paths_sansIL17'])
+	
 	st.session_state['G_PPI_entrez'] = G_PPI_entrez
 	st.session_state['G_KEGGPPI_entrez'] = G_KEGGPPI_entrez
 	st.session_state['KEGG_path_nodes_entrez_dict'] = KEGG_path_nodes_entrez_dict
@@ -217,7 +223,15 @@ elif (custom_GRN_edges is not None) & (custom_PPI_edges is not None) & (custom_G
 	st.session_state['A_KEGGPPI_sparr'] = A_KEGGPPI_sparr
 	st.session_state['KEGG_interaction_types_dict'] = KEGG_interaction_types_dict
 
-	st.session_state['detected_ranked_pathway_pairs_df'] = pd.read_parquet(custom_GRN_parquet)
+# 	st.session_state['detected_ranked_pathway_pairs_df'] = pd.read_parquet(custom_GRN_parquet)
+	
+	if custom_MuXTalk_method == 'MuXTalk_between':
+
+		st.session_state['detected_ranked_pathway_pairs_df'] = pd.read_parquet(args.proj_path + '%s_%s_between_detected_discovery.parquet' % (custom_GRN, custom_PPI))
+				
+	elif custom_MuXTalk_method == 'MuXTalk_shortest':
+
+		st.session_state['detected_ranked_pathway_pairs_df'] = pd.read_parquet(args.proj_path + '%s_%s_shortest_sp%s_detected_discovery.parquet' % (custom_GRN, custom_PPI, custom_sp_threshold))
 	
 else:
 
@@ -248,14 +262,23 @@ multilink_annot_list = ['%s (%s)' %(i, multilink_annot_dict[i]) for i in  st.ses
 multilink_type = form_cols_selectmultilink[0].selectbox('Select multilink type', multilink_annot_list).split(' (')[0]
 	
 if MuXTalk_method == 'MuXTalk_shortest':	
-
-	multilink_edges_entrez_df = return_shortest_multilink_edges_forStreamlit(args.proj_path, sp_threshold, input_PPI, p1, p2, multilink_type, 
-																		st.session_state['KEGG_PPI_allnodes_entrez_df'], 
-																		st.session_state['KEGG_path_nodes_entrez_dict'], 
-																		st.session_state['A_GRN_sparr'], 
-																		st.session_state['A_KEGGPPI_sparr'], 
-																		st.session_state['KEGG_interaction_types_dict'], 
-																		st.session_state['A_KEGG_e_sparr_dict'])		
+	if not submit_button:
+		multilink_edges_entrez_df = return_shortest_multilink_edges_forStreamlit(args.proj_path, sp_threshold, input_PPI, p1, p2, multilink_type, 
+																			st.session_state['KEGG_PPI_allnodes_entrez_df'], 
+																			st.session_state['KEGG_path_nodes_entrez_dict'], 
+																			st.session_state['A_GRN_sparr'], 
+																			st.session_state['A_KEGGPPI_sparr'], 
+																			st.session_state['KEGG_interaction_types_dict'], 
+																			st.session_state['A_KEGG_e_sparr_dict'])	
+	elif submit_button:
+		multilink_edges_entrez_df = return_shortest_multilink_edges_forStreamlit(args.proj_path, custom_sp_threshold, custom_PPI, p1, p2, multilink_type, 
+																			st.session_state['KEGG_PPI_allnodes_entrez_df'], 
+																			st.session_state['KEGG_path_nodes_entrez_dict'], 
+																			st.session_state['A_GRN_sparr'], 
+																			st.session_state['A_KEGGPPI_sparr'], 
+																			st.session_state['KEGG_interaction_types_dict'], 
+																			st.session_state['A_KEGG_e_sparr_dict'])																	
+					
 elif MuXTalk_method == 'MuXTalk_between':	
 
 	multilink_edges_entrez_df = return_between_multilink_edges(p1, p2, multilink_type, 
