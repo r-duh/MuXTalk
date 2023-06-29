@@ -206,6 +206,7 @@ In the event that the Docker container quits with or without errors, the followi
 ```
 docker run -it --memory 12g --memory-swap -1 -v /path/to/MuXTalk_Docker_mount/:/MuXTalk_app/ --rm rduh/muxtalk:slim --proj_path=/MuXTalk_app/ --input_GRN=HumanGRN10e6 --input_PPI=PPI_Cheng_NatComms2019 --input_PPI_ID_format=Entrez --MuXTalk_method=MuXTalk_shortest --sp_threshold=1
 ```
+When running custom GRNs/PPIs in the Streamlit app, clearing the cache before pressing the Submit button often helps.
 
 ## Manuscript analyses
 The analyses presented in our paper can be viewed via the link below:
