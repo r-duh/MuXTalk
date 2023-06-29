@@ -183,7 +183,7 @@ cd /path/to/MuXTalk_Docker_mount/
 ```
 Then, run the streamlit run by typing the below command (note that it has the additional --proj_path flag, which needs to be set to the MuXTalk Streamlit app directory
 ```
-streamlit run MuXTalk_viz_Streamlit_Docker.py -- --proj_path=/path/to/MuXTalk_Docker_mount/
+streamlit run MuXTalk_viz_Streamlit_Docker_v2.py -- --proj_path=/path/to/MuXTalk_Docker_mount/
 ```
 
 - Finally, to see the Streamlit app, go to your browser and enter the address that appears in your terminal (It looks like this: "You can now view your Streamlit app in your browser. URL: `http://0.0.0.0:8501` "). So, typically `http://0.0.0.0:8501`. If you have more than one Streamlit instance running, this can be `http://0.0.0.0:8502`, `http://0.0.0.0:8503`, and so on.
