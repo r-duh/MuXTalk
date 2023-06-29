@@ -148,7 +148,7 @@ This option is somewhat slower to run but has the advantage of not depending on 
 ```
 docker pull rduh/muxtalk-streamlit:slim
 ```
-or loaded from the [.tar file](https://www.dropbox.com/s/r1yd6rcl9pyeyrc/muxtalk_streamlit_slim.tar?dl=0) using
+or loaded from the [.tar file](https://www.dropbox.com/scl/fi/12filo0tz6g84puzdivi6/muxtalk_streamlit_slim.tar?dl=0&rlkey=e4ck1nyw38yq8dzxjm2xeff67) using
 ```
 docker load --input muxtalk_streamlit_slim.tar
 ```
