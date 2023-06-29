@@ -186,7 +186,7 @@ streamlit run MuXTalk_viz_Streamlit_Docker.py -- --proj_path=/path/to/MuXTalk_St
 - Finally, to see the Streamlit app, go to your browser and enter the address that appears in your terminal (It looks like this: "You can now view your Streamlit app in your browser. URL: `http://0.0.0.0:8501` "). So, typically `http://0.0.0.0:8501`. If you have more than one Streamlit instance running, this can be `http://0.0.0.0:8502`, `http://0.0.0.0:8503`, and so on.
 
 
-### Visualizing custom GRNs using the MuXTalk Streamlit app
+### Visualizing custom GRNs and/or PPI networks using the MuXTalk Streamlit app
 For this  option, you first need to run MuXTalk with the GRN and/or PPI of your choosing following the instructions above. After running MuXTalk, you can use its output for visualization. You will need the following outputs of MuXTalk to be present in the /MuXTalk_Docker_mount/ directory:
 - The output .parquet file that ends with "_detected_discovery.parquet"
 - The customGRN_edges.csv file where "customGRN" can be a user-defined name. Please note the **ID format** in this file (Gene Symbol or Entrez ID) as it will be a required input.
