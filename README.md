@@ -11,7 +11,7 @@ A network-based statistical framework to infer and explore crosstalk between sig
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10018775.svg)](https://doi.org/10.5281/zenodo.10018775)
 
-**Preprint URL:** https://www.biorxiv.org/content/10.1101/2022.09.29.510183v1
+[**Link to Paper**](https://doi.org/10.1093/nar/gkad1035) 
 
 ![Overview of the MuXTalk framework](https://github.com/r-duh/MuXTalk/blob/main/MuXTalk_Overview.png?raw=true)
 
